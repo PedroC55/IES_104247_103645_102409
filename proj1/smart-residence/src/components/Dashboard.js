@@ -21,7 +21,10 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import { mainListItems } from './listItems';
 import Chart from './Chart';
 import Deposits from './Deposits';
+import Vacuum from './Vacuum';
+import Purifier from './Purifier';
 import Orders from './Orders';
+import { useEffect } from 'react';
 
 function Copyright(props) {
   return (
@@ -89,6 +92,17 @@ function DashboardContent() {
   const toggleDrawer = () => {
     setOpen(!open);
   };
+
+  useEffect(() => {
+        fetch('http://api.ipma.pt/open-data/distrits-islands.json')
+           .then((response) => response.json())
+           .then((data) => {
+              console.log(data);
+           })
+           .catch((err) => {
+              console.log(err.message);
+           });
+     }, []);
 
   return (
     <ThemeProvider theme= {theme}>
@@ -161,7 +175,7 @@ function DashboardContent() {
           <Toolbar />
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
             <Grid container spacing={3}>
-              {/* Chart */}
+              {/* Power Consumed */}
               <Grid item xs={12} md={8} lg={9}>
                 <Paper elevation={16}
                   sx={{
@@ -187,10 +201,36 @@ function DashboardContent() {
                   <Deposits />
                 </Paper>
               </Grid>
-              {/* Recent Orders */}
+              {/* My Devices */}
               <Grid item xs={12}>
                 <Paper elevation={16} sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
                   <Orders />
+                </Paper>
+              </Grid>
+              {/* Purifier */}
+              <Grid item xs={12} md={6} lg={6}>
+                <Paper elevation={16}
+                  sx={{
+                    p: 2,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    height: 240,
+                  }}
+                >
+                  <Purifier />
+                </Paper>
+              </Grid>
+              {/* Vacuum Cleaner */}
+              <Grid item xs={12} md={6} lg={6}>
+                <Paper elevation={16}
+                  sx={{
+                    p: 2,
+                    display: 'flex',
+                    flexDirection: 'column',
+                    height: 240,
+                  }}
+                >
+                  <Vacuum />
                 </Paper>
               </Grid>
             </Grid>

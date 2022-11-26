@@ -59,7 +59,7 @@ public class Controller {
     public Map<String, Boolean> deleteUser(@PathVariable(value = "id") Long userId)
          throws ResourceNotFoundException {
         User user = userRepository.findById(userId)
-       .orElseThrow(() -> new ResourceNotFoundException("Employee not found for this id :: " + userId));
+       .orElseThrow(() -> new ResourceNotFoundException("User not found for this id :: " + userId));
 
         userRepository.delete(user);
         Map<String, Boolean> response = new HashMap<>();
@@ -81,7 +81,7 @@ public class Controller {
     public ResponseEntity<Device> getDeviceById(@PathVariable(value = "id") Long deviceId)
         throws ResourceNotFoundException {
         Device device = deviceRepository.findById(deviceId)
-          .orElseThrow(() -> new ResourceNotFoundException("User not found for this id :: " + deviceId));
+          .orElseThrow(() -> new ResourceNotFoundException("Device not found for this id :: " + deviceId));
         return ResponseEntity.ok().body(device);
     }
 
@@ -94,7 +94,7 @@ public class Controller {
     public Map<String, Boolean> deleteDivece(@PathVariable(value = "id") Long deviceId)
          throws ResourceNotFoundException {
         Device device = deviceRepository.findById(deviceId)
-       .orElseThrow(() -> new ResourceNotFoundException("Employee not found for this id :: " + deviceId));
+       .orElseThrow(() -> new ResourceNotFoundException("Device not found for this id :: " + deviceId));
 
         deviceRepository.delete(device);
         Map<String, Boolean> response = new HashMap<>();

@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Controller;
 
 import con_backend.api.model.Device;
 //import con_backend.api.exception.ResourceNotFoundException;
@@ -25,9 +26,8 @@ import con_backend.api.repository.UserRepository;
 import con_backend.api.repository.DeviceRepository;
 import con_backend.api.exception.*;
 
-@RestController
-@RequestMapping("/api/v1")
-public class Controller {
+@Controller
+public class HomeController {
 
     @Autowired
     private UserRepository userRepository;
@@ -35,14 +35,19 @@ public class Controller {
     @Autowired
     private DeviceRepository deviceRepository;
 
-    @GetMapping("/users?username={username}")
+    @RequestMapping(value = "/")
+    public String index() {
+        return "index";
+    }
+
+    @GetMapping("api/users?username={username}")
     public ResponseEntity<User> getUserByUsername(@PathVariable(value = "username") String userUsername)
         throws ResourceNotFoundException {
             User user = userRepository.findByUsername(userUsername);
             return ResponseEntity.ok().body(user);
     }
 
-    @GetMapping("/users/{id}")
+    @GetMapping("api/users/{id}")
     public ResponseEntity<User> getUserById(@PathVariable(value = "id") Long userId)
         throws ResourceNotFoundException {
         User user = userRepository.findById(userId)
@@ -50,12 +55,12 @@ public class Controller {
         return ResponseEntity.ok().body(user);
     }
 
-    @PostMapping("/users")
+    @PostMapping("api/users")
     public User createUser(@Valid @RequestBody User user) {
         return userRepository.save(user);
     }
 
-    @DeleteMapping("/users/{id}")
+    @DeleteMapping("api/users/{id}")
     public Map<String, Boolean> deleteUser(@PathVariable(value = "id") Long userId)
          throws ResourceNotFoundException {
         User user = userRepository.findById(userId)
@@ -67,9 +72,7 @@ public class Controller {
         return response;
     }
 
-
-
-    @GetMapping("/devices?name={name}")
+    @GetMapping("api/devices?name={name}")
     public ResponseEntity<Device> getDeviceByName(@PathVariable(value = "name") String name)
         throws ResourceNotFoundException {
             Device device = deviceRepository.findByName(name);
@@ -77,7 +80,7 @@ public class Controller {
     }
 
 
-    @GetMapping("/devices/{id}")
+    @GetMapping("api/devices/{id}")
     public ResponseEntity<Device> getDeviceById(@PathVariable(value = "id") Long deviceId)
         throws ResourceNotFoundException {
         Device device = deviceRepository.findById(deviceId)
@@ -85,12 +88,12 @@ public class Controller {
         return ResponseEntity.ok().body(device);
     }
 
-    @PostMapping("/devices")
+    @PostMapping("api/devices")
     public Device createDevice(@Valid @RequestBody Device device) {
         return deviceRepository.save(device);
     }
 
-    @DeleteMapping("/diveces/{id}")
+    @DeleteMapping("api/devices/{id}")
     public Map<String, Boolean> deleteDivece(@PathVariable(value = "id") Long deviceId)
          throws ResourceNotFoundException {
         Device device = deviceRepository.findById(deviceId)

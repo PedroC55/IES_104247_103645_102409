@@ -22,7 +22,7 @@ class Vacuum extends React.Component {
 
     componentDidMount() {
       // fetch state of vaccuum
-      // http://localhost:8080/vacuum-cleaner
+      // http://localhost:8080/api/vacuum-cleaner
       fetch('http://api.ipma.pt/open-data/distrits-islands.json')
         .then((response) => response.json())
         .then((data) => {

@@ -36,7 +36,7 @@ public class User {
     }
  
     @Column(name = "username", nullable = false)
-    public String getUsrname() {
+    public String getUsername() {
         return username;
     }
     public void setUsername(String username) {

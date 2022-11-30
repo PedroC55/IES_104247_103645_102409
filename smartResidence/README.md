@@ -1,2 +1,3 @@
-docker image build -t smart-residence-jdbc .
-docker-compose up
+```docker image build -t smart-residence-jdbc .```
+
+```docker-compose up```

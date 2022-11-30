@@ -1,0 +1,21 @@
+version: "3"
+services:
+        smart-residence-jdbc:
+                image: smart-residence-jdbc
+                ports:
+                        - "8080:8080"
+                networks:
+                        - smart-residence-mysql
+                depends_on:
+                        - sqldb
+
+        sqldb:
+                image: mysql:8
+                networks:
+                        - smart-residence-mysql
+                environment:
+                        - MYSQL_ROOT_PASSWORD=root
+                        - MYSQL_DATABASE=smartResidence
+
+networks:
+        smart-residence-mysql:

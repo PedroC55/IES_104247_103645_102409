@@ -1,7 +1,6 @@
 import * as React from 'react';
 import Title from './Title';
 import Toggle from 'react-toggle';
-import './style.css'
 
 class Vacuum extends React.Component {
     constructor(props) {

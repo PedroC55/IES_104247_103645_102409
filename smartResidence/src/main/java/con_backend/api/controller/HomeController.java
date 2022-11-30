@@ -56,8 +56,9 @@ public class HomeController {
     }
 
     @PostMapping("api/users")
-    public User createUser(@Valid @RequestBody User user) {
-        return userRepository.save(user);
+    public ResponseEntity<User> createUser(@Valid @RequestBody User user) {
+        userRepository.save(user);
+        return ResponseEntity.ok().body(user);
     }
 
     @DeleteMapping("api/users/{id}")
@@ -89,8 +90,9 @@ public class HomeController {
     }
 
     @PostMapping("api/devices")
-    public Device createDevice(@Valid @RequestBody Device device) {
-        return deviceRepository.save(device);
+    public ResponseEntity<Device> createDevice(@Valid @RequestBody Device device) {
+        deviceRepository.save(device);
+        return ResponseEntity.ok().body(device);
     }
 
     @DeleteMapping("api/devices/{id}")

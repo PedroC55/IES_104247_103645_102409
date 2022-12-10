@@ -1,28 +1,65 @@
 import pika
+import mysql.connector
+import asyncio
+import random
+import json
 
-channel = None
+import time 
 
-def on_connected(connection):
-    connection.channel(on_open_callback=on_channel_open)
+WAIT_TIME = 3
 
-def on_channel_open(new_channel):
-    global channel
-    channel = new_channel
-    channel.queue_declare(queue='test', durable=True, exclusive=False, auto_delete=False, callback=on_queue_declared)
+VACUUM_LOCATIONS = ['Kitchen', 'Living-room', 'Bedroom', 'Bathroom']
+VACUUM_MODES     = ['Power', 'Smart', 'ECO', 'ECO+']
+class Vacuum:
+    def __init__(self):
+        self.id               = 0
+        self.isOn             = True 
+        self.currentLocation  = 'Kitchen'
+        self.cleaningMode     = 'Power'
+        self.remainingBattery = 50
+        self.serialNumber     = ''
 
-def on_queue_declared(frame):
-    channel.basic_consume('test', handle_delivery)
+    # called each frame
+    def update(self):
+        self.remainingBattery -= 1
+        if self.remainingBattery <= 0:
+            self.isOn             = False
+            self.currentLocation  = 'Dock'
+            self.cleaningMode     = 'Off'
+            self.remainingBattery = 100
+            return 
+        self.currentLocation = random.choice(VACUUM_LOCATIONS)
+        self.cleaningMode    = random.choice(VACUUM_MODES)
 
-def handle_delivery(channel, method, header, body):
-    print(body)
+def basic_loop(channel):
+    # FIXIT(cobileacd)
+    print("on_channel_open...")
+    vacuum = Vacuum()
 
-if __name__ == '__main__':
+    db = mysql.connector.connect(host='sqldb', user='root',
+                                    password='root', db='smartResidence')
+    print("mysql.connector.connect...")
+    cursor = db.cursor()
+    cursor.execute('SELECT * FROM vacuum_cleaners WHERE id=1')
 
-    parameters = pika.ConnectionParameters()
-    connection = pika.SelectConnection(parameters, on_open_callback=on_connected)
+    print("cursor.execute")
+    for data in cursor:
+        print(data)
+        vacuum.serialNumber = data[5]
+    vacuum.id = 1
 
-    try:
-        connection.ioloop.start()
-    except KeyboardInterrupt:
-        connection.close()
-        connection.ioloop.start()
+    while True:
+        print(json.dumps(vacuum.__dict__))
+        channel.basic_publish('', 'test_routing_key', json.dumps(vacuum.__dict__), 
+                pika.BasicProperties(content_type='text/plain', delivery_mode=pika.DeliveryMode.Transient))
+        print("message sent.")
+        vacuum.update()
+        time.sleep(WAIT_TIME)
+
+    connection.close()
+
+connection = pika.BlockingConnection(pika.ConnectionParameters(host='rabbitmq', port=5672))
+channel = connection.channel()
+
+channel.queue_declare(queue='test_routing_key', durable=True)
+basic_loop(channel)

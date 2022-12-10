@@ -1,7 +1,7 @@
 version: '2.1'
 services:
         smart-residence-jdbc:
-                image: smart-residence-jdbc
+                build: ./
                 ports:
                         - "8080:8080"
                 networks:
@@ -9,6 +9,11 @@ services:
                 depends_on: 
                         rabbitmq:
                                 condition: service_healthy
+                healthcheck:
+                        test: "curl --silent -f http://localhost:8080 > /dev/null || exit 1"
+                        interval: 20s
+                        timeout: 10s
+                        retries: 2
                 restart: on-failure 
                                 
 
@@ -24,6 +29,17 @@ services:
                         interval: 20s
                         timeout: 10s
                         retries: 2
+
+        data_generator:
+                build: ./data_generation
+                networks:
+                        - smart-residence-network
+                depends_on:
+                        rabbitmq:
+                                condition: service_healthy
+                        smart-residence-jdbc:
+                                condition: service_healthy
+
 
         rabbitmq:
                 image: rabbitmq:management

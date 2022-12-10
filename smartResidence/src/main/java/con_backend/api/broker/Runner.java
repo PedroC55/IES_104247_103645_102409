@@ -8,7 +8,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 @Component
-public class Runner implements CommandLineRunner {
+public class Runner implements CommandLineRunner{
 	
 	private final RabbitTemplate rabbitTemplate;
 	private final Receiver receiver;
@@ -18,10 +18,10 @@ public class Runner implements CommandLineRunner {
 		this.rabbitTemplate = rabbitTemplate;
 	}
 
-	@Override
 	public void run(String... args) throws Exception {
 		System.out.println("Sending Message...");
-		rabbitTemplate.convertAndSend(ApiApplication.topicExchangeName, "foo.bar.baz", "Hello from RabbitMQ!");
-		receiver.getLatch().await(10000, TimeUnit.MILLISECONDS);
+		// rabbitTemplate.convertAndSend(ApiApplication.exchangeName, "test_routing_key", "Hello from RabbitMQ!");
+		//receiver.getLatch().await(10000, TimeUnit.MILLISECONDS);
+									
 	}
 }

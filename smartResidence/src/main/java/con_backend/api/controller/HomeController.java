@@ -116,7 +116,7 @@ public class HomeController {
     }
 
     @DeleteMapping("api/devices/{id}")
-    public Map<String, Boolean> deleteDivece(@PathVariable(value = "id") Long deviceId)
+    public Map<String, Boolean> deleteDevice(@PathVariable(value = "id") Long deviceId)
          throws ResourceNotFoundException {
         Device device = deviceRepository.findById(deviceId)
        .orElseThrow(() -> new ResourceNotFoundException("Device not found for this id :: " + deviceId));

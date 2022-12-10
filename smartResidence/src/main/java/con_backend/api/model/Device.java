@@ -12,17 +12,8 @@ import javax.persistence.Table;
 @Table(name = "devices")
 public class Device {
 
-    /*
-    enum State {
-        ON,
-        OFF
-    }
-    */
-    
-
     private long id;
     private String name;
-    //private State state;
  
     public Device() {
   
@@ -51,23 +42,8 @@ public class Device {
         this.name = name;
     }
  
-    /*
-    @Column(name = "state", nullable = false)
-    public State getstate() {
-        return state;
-    }
-    public void setState(State state) {
-        this.state = state;
-    }
-    */
-
-
     @Override
     public String toString() {
-        /* 
-        return "Device [id=" + id + ", name=" + name + ", state=" + state
-       + "]";
-        */
         return "Device [id=" + id + ", name=" + name + "]";
     }
 

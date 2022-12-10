@@ -6,12 +6,15 @@ class Vacuum extends React.Component {
     constructor(props) {
         super(props);
         this.handleOnOff = this.handleChange.bind(this, 'isOn');
+        this.componentDidMount = this.componentDidMount.bind(this);
 
         this.state = { 
+          id: 0,
           isOn: true,
           currentLocation: 'Living-room',
           cleaningMode: 'Quiet',
           remainingBattery: 56,
+          serialNumber: ''
         };
     }
 
@@ -21,15 +24,17 @@ class Vacuum extends React.Component {
 
     componentDidMount() {
       // fetch state of vaccuum
-      // http://localhost:8080/api/vacuum-cleaner
-      fetch('http://api.ipma.pt/open-data/distrits-islands.json')
-        .then((response) => response.json())
-        .then((data) => {
-            console.log(data);
-        })
-        .catch((err) => {
-            console.log(err.message);
-        });
+      setInterval(async function() {
+        fetch('http://localhost:8080/api/vacuum_cleaners/1')
+          .then((response) => response.json())
+          .then((data) => {
+              console.log(data);
+              this.setState(data);
+          })
+          .catch((err) => {
+              console.log(err.message);
+          });
+      }.bind(this), 1000);
     }
     
     render() {
@@ -38,12 +43,13 @@ class Vacuum extends React.Component {
             <Title>Vacuum</Title>
             <label>
               <Toggle
-                  defaultChecked={this.state.isOn}
+                  checked={this.state.isOn}
                   aria-label='label'
                   onChange={this.handleOnOff} 
               />
               <span className='label-text'>this.state.isOn: {JSON.stringify(this.state.isOn)}</span>
             </label>
+            <span>this.state.id: {JSON.stringify(this.state.id)}</span>
             <span>this.state.currentLocation: {JSON.stringify(this.state.currentLocation)}</span>
             <span>this.state.cleaningMode: {JSON.stringify(this.state.cleaningMode)}</span>
             <span>this.state.remainingBattery: {JSON.stringify(this.state.remainingBattery)}%</span>

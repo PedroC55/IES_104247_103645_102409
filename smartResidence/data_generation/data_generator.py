@@ -8,7 +8,7 @@ def on_connected(connection):
 def on_channel_open(new_channel):
     global channel
     channel = new_channel
-    channel.queue_declare(queue="test", durable=True, exclusive=False, auto_delete=False, callback=on_queue_declared)
+    channel.queue_declare(queue='test', durable=True, exclusive=False, auto_delete=False, callback=on_queue_declared)
 
 def on_queue_declared(frame):
     channel.basic_consume('test', handle_delivery)
@@ -16,11 +16,13 @@ def on_queue_declared(frame):
 def handle_delivery(channel, method, header, body):
     print(body)
 
-parameters = pika.ConnectionParameters()
-connection = pika.SelectConnection(parameters, on_open_callback=on_connected)
+if __name__ == '__main__':
 
-try:
-    connection.ioloop.start()
-except KeyboardInterrupt:
-    connection.close()
-    connection.ioloop.start()
+    parameters = pika.ConnectionParameters()
+    connection = pika.SelectConnection(parameters, on_open_callback=on_connected)
+
+    try:
+        connection.ioloop.start()
+    except KeyboardInterrupt:
+        connection.close()
+        connection.ioloop.start()

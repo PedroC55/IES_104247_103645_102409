@@ -1,0 +1,4 @@
+./mvnw package 
+docker build -t smart-residence-jdbc .
+docker-compose down
+docker-compose up

@@ -9,11 +9,19 @@ import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.listener.SimpleMessageListenerContainer;
 import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import con_backend.api.model.Vacuum;
+import con_backend.api.repository.VacuumRepository;
+
 @SpringBootApplication
-public class ApiApplication {
+public class ApiApplication implements CommandLineRunner {
+
+	@Autowired
+	private VacuumRepository vacuumRepository;
 
 	public static final String topicExchangeName = "spring-boot-exchange";
 
@@ -51,6 +59,12 @@ public class ApiApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(ApiApplication.class, args);
+	}
+
+	@Override
+	public void run(String... args) throws Exception {
+		Vacuum vacuum = new Vacuum(1, true, "Living-room", "Power", 50, "qwerty12345");
+		vacuumRepository.save(vacuum);
 	}
 
 }

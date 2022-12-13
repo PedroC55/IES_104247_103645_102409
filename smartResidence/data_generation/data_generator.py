@@ -6,7 +6,7 @@ import json
 
 import time 
 
-WAIT_TIME = 3
+WAIT_TIME = 1
 
 VACUUM_LOCATIONS = ['Kitchen', 'Living-room', 'Bedroom', 'Bathroom']
 VACUUM_MODES     = ['Power', 'Smart', 'ECO', 'ECO+']
@@ -22,7 +22,7 @@ class Vacuum:
     # called each frame
     def update(self):
         self.remainingBattery -= 1
-        if self.remainingBattery <= 0:
+        if self.remainingBattery <= 0 or self.isOn == False:
             self.isOn             = False
             self.currentLocation  = 'Dock'
             self.cleaningMode     = 'Off'
@@ -34,7 +34,6 @@ class Vacuum:
 def basic_loop(channel):
     # FIXIT(cobileacd)
     print("on_channel_open...")
-    vacuum = Vacuum()
 
     db = mysql.connector.connect(host='sqldb', user='root',
                                     password='root', db='smartResidence')
@@ -43,17 +42,24 @@ def basic_loop(channel):
     cursor.execute('SELECT * FROM vacuum_cleaners WHERE id=1')
 
     print("cursor.execute")
+    vacuum = Vacuum()
+    vacuum.id = 1
     for data in cursor:
         print(data)
         vacuum.serialNumber = data[5]
-    vacuum.id = 1
+        vacuum.isOn = data[3]
 
     while True:
+        cursor.execute('SELECT * FROM vacuum_cleaners WHERE id=1')
+        for data in cursor:
+            vacuum.isOn = True if data[3] else False
+
+        vacuum.update()
         print(json.dumps(vacuum.__dict__))
+
         channel.basic_publish('', 'test_routing_key', json.dumps(vacuum.__dict__), 
                 pika.BasicProperties(content_type='text/plain', delivery_mode=pika.DeliveryMode.Transient))
-        print("message sent.")
-        vacuum.update()
+
         time.sleep(WAIT_TIME)
 
     connection.close()

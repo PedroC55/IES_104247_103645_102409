@@ -20,6 +20,14 @@ class Vacuum extends React.Component {
 
     handleChange(key, event) {
         this.setState({ [key]: event.target.checked })
+        fetch("http://localhost:8080/api/vacuum_cleaners/1/"+event.target.checked)
+          .then((response) => response.json())
+          .then((data) => {
+              console.log(data);
+          })
+          .catch((err) => {
+              console.log(err.message);
+	  });
     }
 
     componentDidMount() {
@@ -34,7 +42,7 @@ class Vacuum extends React.Component {
           .catch((err) => {
               console.log(err.message);
           });
-      }.bind(this), 1000);
+      }.bind(this), 2500);
     }
     
     render() {

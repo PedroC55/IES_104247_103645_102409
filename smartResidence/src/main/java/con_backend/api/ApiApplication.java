@@ -63,7 +63,7 @@ public class ApiApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		Vacuum vacuum = new Vacuum(1, true, "Living-room", "Power", 50, "qwerty12345");
+		Vacuum vacuum = new Vacuum(true, "Living-room", "Power", 50);
 		vacuumRepository.save(vacuum);
 	}
 

@@ -6,8 +6,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.PrePersist;
 
-import org.apache.commons.codec.digest.DigestUtils;
+import java.util.UUID;
 
 @Entity
 @Table(name = "vacuum_cleaners")
@@ -15,7 +16,10 @@ public class Vacuum {
 
     private static final String NAME = "Vacuum";
 
-    private long id;
+    @Id
+    @GeneratedValue
+    private Long id;
+
     private Boolean isOn;
     private String currentLocation;
     private String cleaningMode;
@@ -26,22 +30,17 @@ public class Vacuum {
   
     }
 
-    public Vacuum(long id, Boolean isOn, String currentLocation, String cleaningMode, int remainingBattery,
-		    String serialNumber) {
-	this.id = id;
+    public Vacuum(Boolean isOn, String currentLocation, String cleaningMode, int remainingBattery) {
 	this.isOn = isOn;
 	this.currentLocation = currentLocation; 
 	this.cleaningMode = cleaningMode;
 	this.remainingBattery = remainingBattery;
-	this.serialNumber = serialNumber;
     }
- 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    public long getId() {
-        return id;
+
+    public Long getId() {
+        return this.id;
     }
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
  
@@ -77,18 +76,21 @@ public class Vacuum {
         this.remainingBattery = remainingBattery;
     }
 
-    @Column(name = "serialNumber", nullable = false)
     public String getSerialNumber() {
         return this.serialNumber;
     }
     public void setSerialNumber(String serialNumber) {
-        String final_serial = DigestUtils.sha256Hex(NAME + serialNumber);
-        this.serialNumber = final_serial;
+        this.serialNumber = serialNumber;
+    }
+
+    @PrePersist
+    public void autoFill() {
+	this.setSerialNumber(UUID.randomUUID().toString());
     }
 
     @Override
     public String toString() {
-        return "Vacuum [id=" + this.id + ", serial_number=" + this.serialNumber + "]";
+        return "Vacuum [id=" + this.id + ", serial_number=" + this.serialNumber.toString() + "]";
     }
 
 }

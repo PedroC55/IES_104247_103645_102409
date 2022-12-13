@@ -93,17 +93,6 @@ function DashboardContent() {
     setOpen(!open);
   };
 
-  useEffect(() => {
-        fetch('http://api.ipma.pt/open-data/distrits-islands.json')
-           .then((response) => response.json())
-           .then((data) => {
-              console.log(data);
-           })
-           .catch((err) => {
-              console.log(err.message);
-           });
-     }, []);
-
   return (
     <ThemeProvider theme= {theme}>
       <Box sx={{ display: 'flex' }}>

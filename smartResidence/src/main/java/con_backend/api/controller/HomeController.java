@@ -51,6 +51,20 @@ public class HomeController {
         Vacuum vacuum = vacuumRepository.findBySerialNumber(serial);
         return ResponseEntity.ok().body(vacuum);
     }
+
+    @GetMapping("api/vacuum_cleaners/{id}/{isOn}")
+    public ResponseEntity<Vacuum> getVacuumBySerial(@PathVariable(value = "id") String _id, @PathVariable(value = "isOn") String _isOn)
+        throws ResourceNotFoundException {
+	Long id = Long.parseLong(_id);
+	Boolean isOn = Boolean.parseBoolean(_isOn);
+        Vacuum vacuum = vacuumRepository.findById(id)
+          .orElseThrow(() -> new ResourceNotFoundException("Vacuum not found for this id :: " + id));
+	if (vacuum != null) {
+	    vacuum.setIsOn(isOn);
+	    vacuumRepository.save(vacuum);
+	}
+        return ResponseEntity.ok().body(vacuum);
+    }
     
     @GetMapping("api/vacuum_cleaners/{id}")
     public ResponseEntity<Vacuum> getVacuumById(@PathVariable(value = "id") Long id)

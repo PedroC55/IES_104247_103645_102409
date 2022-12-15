@@ -3,6 +3,7 @@ import mysql.connector
 import asyncio
 import random
 import json
+import requests 
 
 import time 
 
@@ -35,24 +36,21 @@ def basic_loop(channel):
     # FIXIT(cobileacd)
     print("on_channel_open...")
 
-    db = mysql.connector.connect(host='sqldb', user='root',
-                                    password='root', db='smartResidence')
-    print("mysql.connector.connect...")
-    cursor = db.cursor()
-    cursor.execute('SELECT * FROM vacuum_cleaners WHERE id=1')
+    response = requests.get('http://localhost:8080/api/vacuum_cleaners/1')
+    data = response.text
+    vacuum_json = json.loads(data)
+    print(vacuum_json)
 
-    print("cursor.execute")
     vacuum = Vacuum()
     vacuum.id = 1
-    for data in cursor:
-        print(data)
-        vacuum.serialNumber = data[5]
-        vacuum.isOn = data[3]
+    vacuum.serialNumber = vacuum_json['serialNumber']
+    vacuum.isOn = vacuum_json['isOn']
 
     while True:
-        cursor.execute('SELECT * FROM vacuum_cleaners WHERE id=1')
-        for data in cursor:
-            vacuum.isOn = True if data[3] else False
+        response = requests.get('http://localhost:8080/api/vacuum_cleaners/1')
+        data = response.text
+        vacuum_json = json.loads(data)
+        vacuum.isOn = vacuum_json['isOn'] 
 
         vacuum.update()
         print(json.dumps(vacuum.__dict__))

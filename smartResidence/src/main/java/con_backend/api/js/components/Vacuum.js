@@ -42,7 +42,7 @@ class Vacuum extends React.Component {
           .catch((err) => {
               console.log(err.message);
           });
-      }.bind(this), 2500);
+      }.bind(this), 1500);
     }
     
     render() {

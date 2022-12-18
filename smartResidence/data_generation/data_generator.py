@@ -36,21 +36,16 @@ def basic_loop(channel):
     # FIXIT(cobileacd)
     print("on_channel_open...")
 
-    response = requests.get('http://localhost:8080/api/vacuum_cleaners/1')
-    data = response.text
-    vacuum_json = json.loads(data)
-    print(vacuum_json)
-
     vacuum = Vacuum()
     vacuum.id = 1
-    vacuum.serialNumber = vacuum_json['serialNumber']
-    vacuum.isOn = vacuum_json['isOn']
 
     while True:
-        response = requests.get('http://localhost:8080/api/vacuum_cleaners/1')
+        response = requests.get('http://smart-residence-jdbc:8080/api/vacuum_cleaners/1')
         data = response.text
         vacuum_json = json.loads(data)
+
         vacuum.isOn = vacuum_json['isOn'] 
+        vacuum.serialNumber = vacuum_json['serialNumber']
 
         vacuum.update()
         print(json.dumps(vacuum.__dict__))

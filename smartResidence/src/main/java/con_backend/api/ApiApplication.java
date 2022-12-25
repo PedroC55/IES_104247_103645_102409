@@ -16,12 +16,17 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.beans.factory.annotation.Autowired;
 import con_backend.api.model.Vacuum;
 import con_backend.api.repository.VacuumRepository;
+import con_backend.api.model.UserDevice;
+import con_backend.api.repository.UserDeviceRepository;
 
 @SpringBootApplication
 public class ApiApplication implements CommandLineRunner {
 
 	@Autowired
 	private VacuumRepository vacuumRepository;
+
+	@Autowired
+	private UserDeviceRepository userDeviceRepository;
 
 	public static final String exchangeName = "";
 
@@ -65,6 +70,13 @@ public class ApiApplication implements CommandLineRunner {
 	public void run(String... args) throws Exception {
 		Vacuum vacuum = new Vacuum(true, "Living-room", "Power", 50);
 		vacuumRepository.save(vacuum);
+		UserDevice userDevice = new UserDevice(1, vacuum.getSerialNumber());
+		userDeviceRepository.save(userDevice);
+
+		Vacuum vacuum1 = new Vacuum(true, "Living-room", "Power", 50);
+		vacuumRepository.save(vacuum1);
+		UserDevice userDevice1 = new UserDevice(1, vacuum1.getSerialNumber());
+		userDeviceRepository.save(userDevice1);
 	}
 
 }

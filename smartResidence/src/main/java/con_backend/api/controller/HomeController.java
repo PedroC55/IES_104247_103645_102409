@@ -22,10 +22,14 @@ import org.springframework.stereotype.Controller;
 import con_backend.api.model.Device;
 //import con_backend.api.exception.ResourceNotFoundException;
 import con_backend.api.model.User;
+import con_backend.api.model.UserDevice;
 import con_backend.api.model.Vacuum;
+
 import con_backend.api.repository.UserRepository;
+import con_backend.api.repository.UserDeviceRepository;
 import con_backend.api.repository.DeviceRepository;
 import con_backend.api.repository.VacuumRepository;
+
 import con_backend.api.exception.*;
 
 @Controller
@@ -40,9 +44,19 @@ public class HomeController {
     @Autowired
     private VacuumRepository vacuumRepository;
 
+    @Autowired
+    private UserDeviceRepository userDeviceRepository;
+
     @RequestMapping(value = "/")
     public String index() {
         return "index";
+    }
+
+    @GetMapping("api/listUserDevices/{userId}")
+    public ResponseEntity<List<UserDevice>> getDevicesByUserId(@PathVariable(value = "userId") Long userId)
+        throws ResourceNotFoundException {
+        List<UserDevice> userDevices = userDeviceRepository.findByUserId(userId);
+        return ResponseEntity.ok().body(userDevices);
     }
 
     @GetMapping("api/vacuum_cleaners?serialNumber={serialNumber}")

@@ -44,7 +44,7 @@ public class User {
     }
  
     @Column(name = "password", nullable = false)
-    public String getpassword() {
+    public String getPassword() {
         return password;
     }
     public void setPassword(String password) {

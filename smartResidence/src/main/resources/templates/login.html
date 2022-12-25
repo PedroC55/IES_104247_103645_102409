@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org">
+<head lang="en">
+    <meta charset="UTF-8"/>
+    <title>SmartResidence</title>
+    <link rel="stylesheet" href="/main.css" />
+</head>
+<body>
+	<div th:if="${param.error}">
+		Invalid username and  
+       	</div>
+	<div th:if="${param.logout}">
+		You have been logged out.
+	</div>
+	<form th:action="@{/login}" method="post">
+		<div><label> User Name : <input type="text" name="username"/> </label></div>
+		<div><label> Password: <input type="password" name="password"/> </label></div>
+		</div>
+		<div><input type="submit" value="Sign In"/></div>
+	</form>
+</body>
+</html>

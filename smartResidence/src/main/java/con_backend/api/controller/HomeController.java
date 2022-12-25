@@ -47,8 +47,18 @@ public class HomeController {
     @Autowired
     private UserDeviceRepository userDeviceRepository;
 
+    @GetMapping(value = "/login")
+    public String login() {
+        return "login";
+    }
+
     @RequestMapping(value = "/")
     public String index() {
+        return "index";
+    }
+
+    @RequestMapping(value = "/home")
+    public String home() {
         return "index";
     }
 
@@ -59,6 +69,7 @@ public class HomeController {
         return ResponseEntity.ok().body(userDevices);
     }
 
+    // FIXIT: does this have to exist?
     @GetMapping("api/vacuum_cleaners?serialNumber={serialNumber}")
     public ResponseEntity<Vacuum> getVacuumBySerial(@PathVariable(value = "serialNumber") String serial)
         throws ResourceNotFoundException {
@@ -80,6 +91,7 @@ public class HomeController {
         return ResponseEntity.ok().body(vacuum);
     }
     
+    // FIXIT: does this have to exist?
     @GetMapping("api/vacuum_cleaners/{id}")
     public ResponseEntity<Vacuum> getVacuumById(@PathVariable(value = "id") Long id)
         throws ResourceNotFoundException {
@@ -88,7 +100,7 @@ public class HomeController {
         return ResponseEntity.ok().body(vacuum);
     }
 
-    @GetMapping("api/users?username={username}")
+    @GetMapping("api/users/{username}")
     public ResponseEntity<User> getUserByUsername(@PathVariable(value = "username") String userUsername)
         throws ResourceNotFoundException {
             User user = userRepository.findByUsername(userUsername);
@@ -100,12 +112,6 @@ public class HomeController {
         throws ResourceNotFoundException {
         User user = userRepository.findById(userId)
           .orElseThrow(() -> new ResourceNotFoundException("User not found for this id :: " + userId));
-        return ResponseEntity.ok().body(user);
-    }
-
-    @PostMapping("api/users")
-    public ResponseEntity<User> createUser(@Valid @RequestBody User user) {
-        userRepository.save(user);
         return ResponseEntity.ok().body(user);
     }
 
@@ -121,6 +127,7 @@ public class HomeController {
         return response;
     }
 
+    // FIXIT: does this have to exist?
     @GetMapping("api/devices?name={name}")
     public ResponseEntity<Device> getDeviceByName(@PathVariable(value = "name") String name)
         throws ResourceNotFoundException {
@@ -128,7 +135,7 @@ public class HomeController {
             return ResponseEntity.ok().body(device);
     }
 
-
+    // FIXIT: does this have to exist?
     @GetMapping("api/devices/{id}")
     public ResponseEntity<Device> getDeviceById(@PathVariable(value = "id") Long deviceId)
         throws ResourceNotFoundException {
@@ -137,12 +144,14 @@ public class HomeController {
         return ResponseEntity.ok().body(device);
     }
 
+    // FIXIT: does this have to exist?
     @PostMapping("api/devices")
     public ResponseEntity<Device> createDevice(@Valid @RequestBody Device device) {
         deviceRepository.save(device);
         return ResponseEntity.ok().body(device);
     }
 
+    // FIXIT: does this have to exist?
     @DeleteMapping("api/devices/{id}")
     public Map<String, Boolean> deleteDevice(@PathVariable(value = "id") Long deviceId)
          throws ResourceNotFoundException {

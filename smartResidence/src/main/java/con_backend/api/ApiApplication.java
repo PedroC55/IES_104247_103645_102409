@@ -18,6 +18,8 @@ import con_backend.api.model.Vacuum;
 import con_backend.api.repository.VacuumRepository;
 import con_backend.api.model.UserDevice;
 import con_backend.api.repository.UserDeviceRepository;
+import con_backend.api.model.User;
+import con_backend.api.repository.UserRepository;
 
 @SpringBootApplication
 public class ApiApplication implements CommandLineRunner {
@@ -27,6 +29,9 @@ public class ApiApplication implements CommandLineRunner {
 
 	@Autowired
 	private UserDeviceRepository userDeviceRepository;
+
+	@Autowired
+	private UserRepository userRepository;
 
 	public static final String exchangeName = "";
 
@@ -70,12 +75,16 @@ public class ApiApplication implements CommandLineRunner {
 	public void run(String... args) throws Exception {
 		Vacuum vacuum = new Vacuum(true, "Living-room", "Power", 50);
 		vacuumRepository.save(vacuum);
-		UserDevice userDevice = new UserDevice(1, vacuum.getSerialNumber());
+
+		User user = new User("user", "{noop}password", "user@mail.com");
+		userRepository.save(user);
+
+		UserDevice userDevice = new UserDevice(user.getId(), vacuum.getSerialNumber());
 		userDeviceRepository.save(userDevice);
 
 		Vacuum vacuum1 = new Vacuum(true, "Living-room", "Power", 50);
 		vacuumRepository.save(vacuum1);
-		UserDevice userDevice1 = new UserDevice(1, vacuum1.getSerialNumber());
+		UserDevice userDevice1 = new UserDevice(user.getId(), vacuum1.getSerialNumber());
 		userDeviceRepository.save(userDevice1);
 	}
 

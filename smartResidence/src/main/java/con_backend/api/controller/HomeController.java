@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.stereotype.Controller;
 
 import con_backend.api.model.Device;
-//import con_backend.api.exception.ResourceNotFoundException;
 import con_backend.api.model.User;
 import con_backend.api.model.UserDevice;
 import con_backend.api.model.Vacuum;
@@ -31,6 +30,8 @@ import con_backend.api.repository.DeviceRepository;
 import con_backend.api.repository.VacuumRepository;
 
 import con_backend.api.exception.*;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import con_backend.api.MyUserPrincipal;
 
 @Controller
 public class HomeController {
@@ -53,13 +54,15 @@ public class HomeController {
     }
 
     @RequestMapping(value = "/")
-    public String index() {
+    public String index(@AuthenticationPrincipal MyUserPrincipal user) {
         return "index";
     }
 
-    @RequestMapping(value = "/home")
-    public String home() {
-        return "index";
+    @GetMapping("api/listUserDevices")
+    public ResponseEntity<List<UserDevice>> getDevicesByUserId(@AuthenticationPrincipal MyUserPrincipal user)
+        throws ResourceNotFoundException {
+        List<UserDevice> userDevices = userDeviceRepository.findByUserId(user.getId());
+        return ResponseEntity.ok().body(userDevices);
     }
 
     @GetMapping("api/listUserDevices/{userId}")

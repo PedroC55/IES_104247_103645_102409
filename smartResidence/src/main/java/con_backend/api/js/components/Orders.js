@@ -12,6 +12,7 @@ function createData(id, name, location) {
   return { id, name, location };
 }
 
+
 const rows = [
   createData(
     0,
@@ -45,6 +46,17 @@ function preventDefault(event) {
 }
 
 export default function Orders() {
+  React.useEffect(() => {
+	  fetch('http://localhost:8080/api/listUserDevices')
+		  .then((response) => response.json())
+		  .then((data) => {
+			  console.log(data);
+		  })
+		  .catch((err) => {
+			  console.log(err.message);
+		  });
+  }, []);
+
   return (
     <React.Fragment>
       <Title>My Devices</Title>

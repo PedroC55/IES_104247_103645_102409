@@ -16,6 +16,10 @@ public class MyUserPrincipal implements UserDetails {
 		this.user = user;
 	}
 
+	public long getId() {
+		return user.getId();
+	}
+
 	@Override
 	public String getUsername() {
 		return user.getUsername();

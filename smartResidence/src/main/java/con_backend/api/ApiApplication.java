@@ -79,12 +79,12 @@ public class ApiApplication implements CommandLineRunner {
 		User user = new User("user", "{noop}password", "user@mail.com");
 		userRepository.save(user);
 
-		UserDevice userDevice = new UserDevice(user.getId(), vacuum.getSerialNumber());
+		UserDevice userDevice = new UserDevice(user.getId(), vacuum.getId(), "Vacuum", vacuum.getSerialNumber());
 		userDeviceRepository.save(userDevice);
 
 		Vacuum vacuum1 = new Vacuum(true, "Living-room", "Power", 50);
 		vacuumRepository.save(vacuum1);
-		UserDevice userDevice1 = new UserDevice(user.getId(), vacuum1.getSerialNumber());
+		UserDevice userDevice1 = new UserDevice(user.getId(), vacuum1.getId(), "Vacuum", vacuum1.getSerialNumber());
 		userDeviceRepository.save(userDevice1);
 	}
 

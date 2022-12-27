@@ -22,6 +22,8 @@ CREATE TABLE IF NOT EXISTS vacuum_cleaners (
 CREATE TABLE IF NOT EXISTS user_device (
         id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
         user_id INT(6) UNSIGNED,
+        device_id INT(6) UNSIGNED,
+        device_type VARCHAR(16),
         device_serial_number VARCHAR(32),
 );
 

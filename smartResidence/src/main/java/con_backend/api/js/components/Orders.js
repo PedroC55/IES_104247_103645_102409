@@ -8,49 +8,29 @@ import TableRow from '@mui/material/TableRow';
 import Title from './Title';
 
 // Generate Order Data
-function createData(id, name, location) {
-  return { id, name, location };
+function createData(type, id, serial_number) {
+  return { type, id, serial_number};
 }
 
-
-const rows = [
-  createData(
-    0,
-    'Light #1',
-    'Kitchen',
-  ),
-  createData(
-    1,
-    'Light #2',
-    'Bedroom',
-  ),
-  createData(
-    2,
-    'Vacuum cleaner',
-    'Living room',
-  ),
-  createData(
-    3,
-    'Smart Purifier',
-    'Hall',
-  ),
-  createData(
-    4,
-    'Refrigerator',
-    'Kitchen',
-  ),
-];
+const table = [];
 
 function preventDefault(event) {
   event.preventDefault();
 }
 
 export default function Orders() {
+  const [rows, setRows] = React.useState([]);
+
   React.useEffect(() => {
 	  fetch('http://localhost:8080/api/listUserDevices')
 		  .then((response) => response.json())
 		  .then((data) => {
 			  console.log(data);
+                          const table = [];
+                          for (const device of data) {
+                            table.push(createData(device.deviceType, device.deviceId, device.deviceSerialNumber));
+                          }
+                          setRows(table);
 		  })
 		  .catch((err) => {
 			  console.log(err.message);
@@ -63,15 +43,17 @@ export default function Orders() {
       <Table size="small">
         <TableHead>
           <TableRow>
-            <TableCell>Name</TableCell>
-            <TableCell align="right">Location</TableCell>
+            <TableCell>Device</TableCell>
+            <TableCell>ID</TableCell>
+            <TableCell align="right">Serial Number</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
           {rows.map((row) => (
             <TableRow key={row.id}>
-              <TableCell>{row.name}</TableCell>
-              <TableCell align="right">{row.location}</TableCell>
+              <TableCell>{row.type}</TableCell>
+              <TableCell>#{row.id}</TableCell>
+              <TableCell align="right">{row.serial_number}</TableCell>
             </TableRow>
           ))}
         </TableBody>

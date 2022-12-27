@@ -13,12 +13,16 @@ public class UserDevice {
 
     private long id;
     private long UserId;
+    private long DeviceId;
+    private String DeviceType;
     private String DeviceSerialNumber;
 
     public UserDevice() {}
 
-    public UserDevice(long UserId, String DeviceSerialNumber) {
+    public UserDevice(long UserId, Long DeviceId, String DeviceType, String DeviceSerialNumber) {
 	    this.UserId = UserId;
+            this.DeviceId = DeviceId;
+	    this.DeviceType = DeviceType;
 	    this.DeviceSerialNumber = DeviceSerialNumber;
     }
 
@@ -36,6 +40,22 @@ public class UserDevice {
     }
     public void setUserId(long UserId) {
         this.UserId = UserId;
+    }
+
+    @Column(name = "device_id")
+    public long getDeviceId() {
+        return this.DeviceId;
+    }
+    public void setDeviceId(long DeviceId) {
+        this.DeviceId = DeviceId;
+    }
+
+    @Column(name = "device_type")
+    public String getDeviceType() {
+        return this.DeviceType;
+    }
+    public void setDeviceType(String DeviceType) {
+        this.DeviceType = DeviceType;
     }
 
     @Column(name = "device_serial")

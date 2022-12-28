@@ -43,7 +43,7 @@ class Vacuum extends React.Component {
           .catch((err) => {
               console.log(err.message);
           });
-      }.bind(this), 1500);
+      }.bind(this), Math.random() * (2500 - 1500) + 1500);
     }
     
     render() {

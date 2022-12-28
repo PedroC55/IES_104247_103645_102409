@@ -8,11 +8,25 @@ function preventDefault(event) {
 }
 
 export default function Deposits() {
+  const [user, setUser] = React.useState("");
+
+  React.useEffect(() => {
+	  fetch('http://localhost:8080/api/getUsername')
+		  .then((response) => response.json())
+		  .then((data) => {
+			  console.log(data);
+                          setUser(data.username);
+		  })
+		  .catch((err) => {
+			  console.log(err.message);
+		  });
+  }, []);
+  
   return (
     <React.Fragment>
       <Title>Members</Title>
       <Typography component="p" variant="h4">
-        Frank 
+        {user}
       </Typography>
       <Typography color="text.secondary">
         Mary 

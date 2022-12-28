@@ -89,9 +89,23 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 
 function DashboardContent() {
   const [open, setOpen] = React.useState(true);
+  const [user, setUser] = React.useState("");
+
   const toggleDrawer = () => {
     setOpen(!open);
   };
+
+  React.useEffect(() => {
+	  fetch('http://localhost:8080/api/getUsername')
+		  .then((response) => response.json())
+		  .then((data) => {
+			  console.log(data);
+                          setUser(data.username);
+		  })
+		  .catch((err) => {
+			  console.log(err.message);
+		  });
+  }, []);
 
   return (
     <ThemeProvider theme= {theme}>
@@ -122,7 +136,7 @@ function DashboardContent() {
               noWrap
               sx={{ flexGrow: 1 }}
             >
-              Hi, Frank! 
+              Hi, {user}
             </Typography>
             <IconButton color="inherit">
               <Badge badgeContent={4} color="secondary">

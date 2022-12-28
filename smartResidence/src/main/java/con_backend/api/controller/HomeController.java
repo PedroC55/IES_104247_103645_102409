@@ -103,6 +103,14 @@ public class HomeController {
         return ResponseEntity.ok().body(vacuum);
     }
 
+    @GetMapping("api/getUsername")
+    public ResponseEntity<String> getUserByUsername(@AuthenticationPrincipal MyUserPrincipal user)
+        throws ResourceNotFoundException {
+        User finalUser = userRepository.findById(user.getId())
+          .orElseThrow(() -> new ResourceNotFoundException("User not found for this id :: " + user.getId()));
+        return ResponseEntity.ok().body("{\"username\": \"" + finalUser.getUsername() + "\"}");
+    }
+
     @GetMapping("api/users/{username}")
     public ResponseEntity<User> getUserByUsername(@PathVariable(value = "username") String userUsername)
         throws ResourceNotFoundException {

@@ -12,8 +12,8 @@ WAIT_TIME = 1
 VACUUM_LOCATIONS = ['Kitchen', 'Living-room', 'Bedroom', 'Bathroom']
 VACUUM_MODES     = ['Power', 'Smart', 'ECO', 'ECO+']
 class Vacuum:
-    def __init__(self):
-        self.id               = 0
+    def __init__(self, id):
+        self.id               = id
         self.isOn             = True 
         self.currentLocation  = 'Kitchen'
         self.cleaningMode     = 'Power'
@@ -36,22 +36,28 @@ def basic_loop(channel):
     # FIXIT(cobileacd)
     print("on_channel_open...")
 
-    vacuum = Vacuum()
-    vacuum.id = 1
+
+    response = requests.get('http://smart-residence-jdbc:8080/api/vacuum_cleaners')
+    data = response.text
+    vacuums_json = json.loads(data)
+    vacuums = []
+    for vacuum in vacuums_json:
+        vacuums.append(Vacuum(vacuum['id']))
 
     while True:
-        response = requests.get('http://smart-residence-jdbc:8080/api/vacuum_cleaners/1')
-        data = response.text
-        vacuum_json = json.loads(data)
+        for vacuum in vacuums:
+            response = requests.get(f'http://smart-residence-jdbc:8080/api/vacuum_cleaners/{vacuum.id}')
+            data = response.text
+            vacuum_json = json.loads(data)
 
-        vacuum.isOn = vacuum_json['isOn'] 
-        vacuum.serialNumber = vacuum_json['serialNumber']
+            vacuum.isOn = vacuum_json['isOn'] 
+            vacuum.serialNumber = vacuum_json['serialNumber']
 
-        vacuum.update()
-        print(json.dumps(vacuum.__dict__))
+            vacuum.update()
+            print(json.dumps(vacuum.__dict__))
 
-        channel.basic_publish('', 'test_routing_key', json.dumps(vacuum.__dict__), 
-                pika.BasicProperties(content_type='text/plain', delivery_mode=pika.DeliveryMode.Transient))
+            channel.basic_publish('', 'test_routing_key', json.dumps(vacuum.__dict__), 
+                    pika.BasicProperties(content_type='text/plain', delivery_mode=pika.DeliveryMode.Transient))
 
         time.sleep(WAIT_TIME)
 

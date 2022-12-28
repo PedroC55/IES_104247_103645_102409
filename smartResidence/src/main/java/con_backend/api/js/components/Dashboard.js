@@ -87,9 +87,15 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 
 //const mdTheme = createTheme();
 
+// Generate Order Data
+function createData(type, id, serial_number) {
+  return { type, id, serial_number};
+}
+
 function DashboardContent() {
   const [open, setOpen] = React.useState(true);
   const [user, setUser] = React.useState("");
+  const [devices, setDevices] = React.useState([]);
 
   const toggleDrawer = () => {
     setOpen(!open);
@@ -101,6 +107,20 @@ function DashboardContent() {
 		  .then((data) => {
 			  console.log(data);
                           setUser(data.username);
+		  })
+		  .catch((err) => {
+			  console.log(err.message);
+		  });
+
+	  fetch('http://localhost:8080/api/listUserDevices')
+		  .then((response) => response.json())
+		  .then((data) => {
+			  console.log(data);
+                          const devicesTemp = [];
+                          for (const device of data) {
+                            devicesTemp.push(createData(device.deviceType, device.deviceId, device.deviceSerialNumber));
+                          }
+                          setDevices(devicesTemp);
 		  })
 		  .catch((err) => {
 			  console.log(err.message);
@@ -210,32 +230,22 @@ function DashboardContent() {
                   <Orders />
                 </Paper>
               </Grid>
-              {/* Purifier */}
-              <Grid item xs={12} md={6} lg={6}>
-                <Paper elevation={16}
-                  sx={{
-                    p: 2,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    height: 240,
-                  }}
-                >
-                  <Purifier />
-                </Paper>
-              </Grid>
               {/* Vacuum Cleaner */}
-              <Grid item xs={12} md={6} lg={6}>
-                <Paper elevation={16}
-                  sx={{
-                    p: 2,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    height: 240,
-                  }}
-                >
-                  <Vacuum />
-                </Paper>
-              </Grid>
+              {devices.map((row, index) => (
+                <Grid item key={row.id} xs={12} md={6} lg={6}>
+                  <Paper elevation={16}
+                    sx={{
+                      p: 2,
+                      display: 'flex',
+                      flexDirection: 'column',
+                      height: 240,
+                    }}
+                  >
+                    {/* TODO: switch for dif types */}
+                    <Vacuum id={row.id}/>
+                  </Paper>
+                </Grid>
+              ))}
             </Grid>
             <Copyright sx={{ pt: 4 }} />
           </Container>

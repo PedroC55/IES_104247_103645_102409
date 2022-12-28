@@ -8,8 +8,9 @@ class Vacuum extends React.Component {
         this.handleOnOff = this.handleChange.bind(this, 'isOn');
         this.componentDidMount = this.componentDidMount.bind(this);
 
+        console.log(this.props);
         this.state = { 
-          id: 0,
+          id: this.props.id,
           isOn: true,
           currentLocation: 'Living-room',
           cleaningMode: 'Quiet',
@@ -20,7 +21,7 @@ class Vacuum extends React.Component {
 
     handleChange(key, event) {
         this.setState({ [key]: event.target.checked })
-        fetch("http://localhost:8080/api/vacuum_cleaners/1/"+event.target.checked)
+        fetch("http://localhost:8080/api/vacuum_cleaners/"+ this.state.id + "/"+event.target.checked)
           .then((response) => response.json())
           .then((data) => {
               console.log(data);
@@ -33,7 +34,7 @@ class Vacuum extends React.Component {
     componentDidMount() {
       // fetch state of vaccuum
       setInterval(async function() {
-        fetch('http://localhost:8080/api/vacuum_cleaners/1')
+        fetch('http://localhost:8080/api/vacuum_cleaners/' + this.state.id)
           .then((response) => response.json())
           .then((data) => {
               console.log(data);

@@ -86,6 +86,9 @@ public class ApiApplication implements CommandLineRunner {
 		vacuumRepository.save(vacuum1);
 		UserDevice userDevice1 = new UserDevice(user.getId(), vacuum1.getId(), "Vacuum", vacuum1.getSerialNumber());
 		userDeviceRepository.save(userDevice1);
+
+		Vacuum vacuum2 = new Vacuum(true, "Living-room", "Power", 50);
+		vacuumRepository.save(vacuum2);
 	}
 
 }

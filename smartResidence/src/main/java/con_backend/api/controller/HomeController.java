@@ -72,6 +72,13 @@ public class HomeController {
         return ResponseEntity.ok().body(userDevices);
     }
 
+    @GetMapping("api/vacuum_cleaners")
+    public ResponseEntity<List<Vacuum>> getAllVacuums()
+        throws ResourceNotFoundException {
+        List<Vacuum> vacuum_cleaners = vacuumRepository.findAll();
+        return ResponseEntity.ok().body(vacuum_cleaners);
+    }
+
     // FIXIT: does this have to exist?
     @GetMapping("api/vacuum_cleaners?serialNumber={serialNumber}")
     public ResponseEntity<Vacuum> getVacuumBySerial(@PathVariable(value = "serialNumber") String serial)

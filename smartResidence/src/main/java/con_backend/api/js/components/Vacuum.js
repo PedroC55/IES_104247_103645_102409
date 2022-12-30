@@ -56,7 +56,8 @@ class Vacuum extends React.Component {
                   aria-label='label'
                   onChange={this.handleOnOff} 
               />
-              <span className='label-text'>this.state.isOn: {JSON.stringify(this.state.isOn)}</span>
+              <span className='label-text'>this.state.isOn: </span>
+              <span className='label-text' style={{ color: this.state.isOn ? 'green' : 'red' }}>{JSON.stringify(this.state.isOn)}</span>
             </label>
             <span>this.state.id: {JSON.stringify(this.state.id)}</span>
             <span>this.state.currentLocation: {JSON.stringify(this.state.currentLocation)}</span>

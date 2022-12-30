@@ -65,6 +65,7 @@ public class HomeController {
         return ResponseEntity.ok().body(userDevices);
     }
 
+    // FIXIT
     @GetMapping("api/listUserDevices/{userId}")
     public ResponseEntity<List<UserDevice>> getDevicesByUserId(@PathVariable(value = "userId") Long userId)
         throws ResourceNotFoundException {
@@ -72,11 +73,30 @@ public class HomeController {
         return ResponseEntity.ok().body(userDevices);
     }
 
+    @GetMapping("api/getDevicesCount")
+    public ResponseEntity<Integer> getDevicesCount() {
+	int count = 0;
+	count += vacuumRepository.count();
+	// TODO(cobileacd): do for other repos too.
+	return ResponseEntity.ok().body(count);
+    }
+
     @GetMapping("api/vacuum_cleaners")
     public ResponseEntity<List<Vacuum>> getAllVacuums()
         throws ResourceNotFoundException {
         List<Vacuum> vacuum_cleaners = vacuumRepository.findAll();
         return ResponseEntity.ok().body(vacuum_cleaners);
+    }
+
+    // Should be create device
+    @GetMapping("api/createVacuumCleaner")
+    public ResponseEntity<List<UserDevice>> createVacuumCleaner(@AuthenticationPrincipal MyUserPrincipal user) {
+	Vacuum newVacuum = new Vacuum();
+	vacuumRepository.save(newVacuum);
+	UserDevice userDevice = new UserDevice(user.getId(), newVacuum.getId(), "Vacuum", newVacuum.getSerialNumber());
+	userDeviceRepository.save(userDevice);
+        List<UserDevice> userDevices = userDeviceRepository.findByUserId(user.getId());
+        return ResponseEntity.ok().body(userDevices);
     }
 
     // FIXIT: does this have to exist?

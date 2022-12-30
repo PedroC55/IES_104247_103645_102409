@@ -18,23 +18,46 @@ function preventDefault(event) {
   event.preventDefault();
 }
 
-export default function Orders() {
+
+export default function Orders(props) {
   const [rows, setRows] = React.useState([]);
 
+  function addNewDevice() {
+      fetch('http://localhost:8080/api/createVacuumCleaner')
+              .then((response) => response.json())
+              .then((data) => {
+                      console.log(data);
+                      const table = [];
+                      for (const device of data) {
+                        table.push(createData(device.deviceType, device.deviceId, device.deviceSerialNumber));
+                      }
+                      setRows(table);
+                      props.onDeviceListChange(table);
+              })
+              .catch((err) => {
+                      console.log(err.message);
+              });
+  }
+
+  function listUserDevices() {
+      fetch('http://localhost:8080/api/listUserDevices')
+              .then((response) => response.json())
+              .then((data) => {
+                      console.log(data);
+                      const table = [];
+                      for (const device of data) {
+                        table.push(createData(device.deviceType, device.deviceId, device.deviceSerialNumber));
+                      }
+                      setRows(table);
+                      props.onDeviceListChange(table);
+              })
+              .catch((err) => {
+                      console.log(err.message);
+              });
+  }
+
   React.useEffect(() => {
-	  fetch('http://localhost:8080/api/listUserDevices')
-		  .then((response) => response.json())
-		  .then((data) => {
-			  console.log(data);
-                          const table = [];
-                          for (const device of data) {
-                            table.push(createData(device.deviceType, device.deviceId, device.deviceSerialNumber));
-                          }
-                          setRows(table);
-		  })
-		  .catch((err) => {
-			  console.log(err.message);
-		  });
+      listUserDevices();
   }, []);
 
   return (
@@ -58,7 +81,7 @@ export default function Orders() {
           ))}
         </TableBody>
       </Table>
-      <Link color="primary" href="#" onClick={preventDefault} sx={{ mt: 3 }}>
+      <Link color="primary" href="#" onClick={addNewDevice} sx={{ mt: 3 }}>
         Add new device 
       </Link>
     </React.Fragment>

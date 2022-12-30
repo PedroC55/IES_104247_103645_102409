@@ -111,21 +111,11 @@ function DashboardContent() {
 		  .catch((err) => {
 			  console.log(err.message);
 		  });
-
-	  fetch('http://localhost:8080/api/listUserDevices')
-		  .then((response) => response.json())
-		  .then((data) => {
-			  console.log(data);
-                          const devicesTemp = [];
-                          for (const device of data) {
-                            devicesTemp.push(createData(device.deviceType, device.deviceId, device.deviceSerialNumber));
-                          }
-                          setDevices(devicesTemp);
-		  })
-		  .catch((err) => {
-			  console.log(err.message);
-		  });
   }, []);
+
+  const handleDevicesChange = (newDevices) => {
+      setDevices(newDevices);
+  }
 
   return (
     <ThemeProvider theme= {theme}>
@@ -227,7 +217,7 @@ function DashboardContent() {
               {/* My Devices */}
               <Grid item xs={12}>
                 <Paper elevation={16} sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
-                  <Orders />
+                  <Orders onDeviceListChange={handleDevicesChange}/>
                 </Paper>
               </Grid>
               {/* Vacuum Cleaner */}

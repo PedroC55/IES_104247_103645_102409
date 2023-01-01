@@ -21,7 +21,7 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import { mainListItems } from './listItems';
 import Chart from './Chart';
 import Deposits from './Deposits';
-import Vacuum from './Vacuum';
+import Device from './Device';
 import Purifier from './Purifier';
 import Orders from './Orders';
 import { useEffect } from 'react';
@@ -232,7 +232,7 @@ function DashboardContent() {
                     }}
                   >
                     {/* TODO: switch for dif types */}
-                    <Vacuum id={row.id}/>
+                    <Device id={row.id}/>
                   </Paper>
                 </Grid>
               ))}

@@ -9,12 +9,14 @@ import javax.persistence.Table;
 import javax.persistence.PrePersist;
 
 import java.util.UUID;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @Entity
 @Table(name = "vacuum_cleaners")
+@JsonPropertyOrder({"name", "id", "isOn", "currentLocation", "cleaningMode", "remainingBattery", "serialNumber"})
 public class Vacuum {
 
-    private static final String NAME = "Vacuum";
+    private final String NAME = "Vacuum";
 
     @Id
     @GeneratedValue
@@ -31,11 +33,16 @@ public class Vacuum {
     }
 
     public Vacuum(Boolean isOn, String currentLocation, String cleaningMode, int remainingBattery) {
-	this.isOn = isOn;
-	this.currentLocation = currentLocation; 
-	this.cleaningMode = cleaningMode;
-	this.remainingBattery = remainingBattery;
+        this.isOn = isOn;
+        this.currentLocation = currentLocation; 
+        this.cleaningMode = cleaningMode;
+        this.remainingBattery = remainingBattery;
     }
+
+    public String getName() {
+        return this.NAME;
+    }
+
 
     public Long getId() {
         return this.id;

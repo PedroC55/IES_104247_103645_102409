@@ -27,3 +27,11 @@ CREATE TABLE IF NOT EXISTS user_device (
         device_serial_number VARCHAR(32),
 );
 
+CREATE TABLE IF NOT EXISTS light_bulbs (
+        id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+        isOn BOOLEAN NOT NULL,
+        location VARCHAR(32) NOT NULL,
+        brightness INT(6) NOT NULL,
+        color VARCHAR(3) UNSIGNED NOT NULL,
+        serialNumber VARCHAR(64) NOT NULL
+);

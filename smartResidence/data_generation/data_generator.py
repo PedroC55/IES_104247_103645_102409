@@ -14,6 +14,7 @@ VACUUM_MODES     = ['Power', 'Smart', 'ECO', 'ECO+']
 class Vacuum:
     def __init__(self, id):
         self.id               = id
+        self.name             = 'Vacuum'
         self.isOn             = True 
         self.currentLocation  = 'Kitchen'
         self.cleaningMode     = 'Power'
@@ -32,6 +33,35 @@ class Vacuum:
         self.currentLocation = random.choice(VACUUM_LOCATIONS)
         self.cleaningMode    = random.choice(VACUUM_MODES)
 
+class LightBulb:
+    def __init__(self, id):
+        self.id = id
+        self.name = 'LightBulb'
+        self.isOn = True
+        self.location = 'Living room'
+        self.brightnessLvl = 100
+        self.color = 'Warm White'
+        self.current_power_usage = 9
+        self.serialNumber = ''
+
+    def update(self):
+        pass
+
+class CoffeeMachine:
+    def __init__(self, id):
+        self.id = id
+        self.name = 'CoffeeMachine'
+        self.isOn = True
+        self.coffee_time = '09:00'
+        self.strength = 'Weak'
+        self.water_lvl = 89 
+        self.add_water = False
+        self.current_power_usage = 9
+        self.serialNumber = ''
+
+    def update(self):
+        pass
+
 def getDataFromCall(url):
     response = requests.get(url)
     return response.text
@@ -44,27 +74,37 @@ def basic_loop(channel):
     print("on_channel_open...")
     
     deviceCount = 0
-    vacuums = []
+    devices = []
     while True:
         newDeviceCount = getDataFromCall('http://smart-residence-jdbc:8080/api/getDevicesCount')
         if deviceCount != newDeviceCount:
             deviceCount = newDeviceCount
-            vacuums_json = getJsonFromCall('http://smart-residence-jdbc:8080/api/vacuum_cleaners')
-            for vacuum in vacuums_json:
-                vacuums.append(Vacuum(vacuum['id']))
+            devices_json = getJsonFromCall('http://smart-residence-jdbc:8080/api/getDevices')
+            devices_json = sum(devices_json, []) # make it flat
 
-        for vacuum in vacuums:
-            response = requests.get(f'http://smart-residence-jdbc:8080/api/vacuum_cleaners/{vacuum.id}')
+            for device in devices_json:
+                if device['name'] == 'Vacuum':
+                    devices.append(Vacuum(device['id']))
+                elif device['name'] == 'LightBulb':
+                    devices.append(LightBulb(device['id']))
+                elif device['name'] == 'CoffeeMachine':
+                    devices.append(CoffeeMachine(device['id']))
+
+        for device in devices:
+            if type(device) == Vacuum:
+                response = requests.get(f'http://smart-residence-jdbc:8080/api/vacuum_cleaners/{device.id}') 
+            elif type(device) == LightBulb:
+                response = requests.get(f'http://smart-residence-jdbc:8080/api/light_bulbs/{device.id}') 
+            elif type(device) == CoffeeMachine:
+                response = requests.get(f'http://smart-residence-jdbc:8080/api/coffee_machines/{device.id}') 
             data = response.text
-            vacuum_json = json.loads(data)
+            device_json = json.loads(data)
 
-            vacuum.isOn = vacuum_json['isOn'] 
-            vacuum.serialNumber = vacuum_json['serialNumber']
+            device.isOn = device_json['isOn'] 
+            device.serialNumber = device_json['serialNumber']
+            device.update()
 
-            vacuum.update()
-            print(json.dumps(vacuum.__dict__))
-
-            channel.basic_publish('', 'test_routing_key', json.dumps(vacuum.__dict__), 
+            channel.basic_publish('', 'test_routing_key', json.dumps(device.__dict__), 
                     pika.BasicProperties(content_type='text/plain', delivery_mode=pika.DeliveryMode.Transient))
 
         time.sleep(WAIT_TIME)

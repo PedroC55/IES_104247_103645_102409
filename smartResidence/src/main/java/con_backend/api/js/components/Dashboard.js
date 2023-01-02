@@ -21,8 +21,9 @@ import NotificationsIcon from '@mui/icons-material/Notifications';
 import { mainListItems } from './listItems';
 import Chart from './Chart';
 import Deposits from './Deposits';
-import Device from './Device';
-import Purifier from './Purifier';
+import Vacuum from './Vacuum';
+import LightBulb from './LightBulb';
+import CoffeeMachine from './CoffeeMachine';
 import Orders from './Orders';
 import { useEffect } from 'react';
 
@@ -115,6 +116,14 @@ function DashboardContent() {
 
   const handleDevicesChange = (newDevices) => {
       setDevices(newDevices);
+  }
+
+  const renderSwitchDevice = (param, id) => {
+      switch(param) {
+          case 'Vacuum': return <Vacuum id={id}/>;
+          case 'LightBulb': return <LightBulb id={id}/>;
+          case 'CoffeeMachine': return <CoffeeMachine id={id}/>;
+      }
   }
 
   return (
@@ -232,7 +241,7 @@ function DashboardContent() {
                     }}
                   >
                     {/* TODO: switch for dif types */}
-                    <Device id={row.id}/>
+                    {renderSwitchDevice(row.type, row.id)}
                   </Paper>
                 </Grid>
               ))}

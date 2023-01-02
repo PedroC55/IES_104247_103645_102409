@@ -23,11 +23,21 @@ import con_backend.api.model.Device;
 import con_backend.api.model.User;
 import con_backend.api.model.UserDevice;
 import con_backend.api.model.Vacuum;
+import con_backend.api.model.CoffeeMachine;
+import con_backend.api.model.LightBulb;
+import con_backend.api.model.MovementSensor;
+import con_backend.api.model.Thermostat;
+import con_backend.api.model.Refrigerator;
 
 import con_backend.api.repository.UserRepository;
 import con_backend.api.repository.UserDeviceRepository;
 import con_backend.api.repository.DeviceRepository;
 import con_backend.api.repository.VacuumRepository;
+import con_backend.api.repository.CoffeeMachineRepository;
+import con_backend.api.repository.LightBulbRepository;
+import con_backend.api.repository.MovementSensorRepository;
+import con_backend.api.repository.ThermostatRepository;
+import con_backend.api.repository.RefrigeratorRepository;
 
 import con_backend.api.exception.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -40,13 +50,29 @@ public class HomeController {
     private UserRepository userRepository;
 
     @Autowired
+    private UserDeviceRepository userDeviceRepository;
+
+    @Autowired
     private DeviceRepository deviceRepository;
 
     @Autowired
     private VacuumRepository vacuumRepository;
 
     @Autowired
-    private UserDeviceRepository userDeviceRepository;
+    private CoffeeMachineRepository coffeeMachineRepository;
+
+    @Autowired
+    private LightBulbRepository lightBulbRepository;
+
+    @Autowired
+    private MovementSensorRepository movementSensorRepository;
+
+    @Autowired
+    private ThermostatRepository thermostatRepository;
+
+    @Autowired
+    private RefrigeratorRepository refrigeratorRepository;
+
 
     @GetMapping(value = "/login")
     public String login() {
@@ -75,26 +101,33 @@ public class HomeController {
 
     @GetMapping("api/getDevicesCount")
     public ResponseEntity<Integer> getDevicesCount() {
-	int count = 0;
-	count += vacuumRepository.count();
-	// TODO(cobileacd): do for other repos too.
-	return ResponseEntity.ok().body(count);
+      int count = 0;
+      count += vacuumRepository.count();
+      count += coffeeMachineRepository.count();
+      count += lightBulbRepository.count();
+      count += movementSensorRepository.count();
+      count += thermostatRepository.count();
+      count += refrigeratorRepository.count();
+      return ResponseEntity.ok().body(count);
     }
 
-    @GetMapping("api/vacuum_cleaners")
-    public ResponseEntity<List<Vacuum>> getAllVacuums()
+    @GetMapping("api/getDevices")
+    public ResponseEntity<List<Object>> getDevices()
         throws ResourceNotFoundException {
         List<Vacuum> vacuum_cleaners = vacuumRepository.findAll();
-        return ResponseEntity.ok().body(vacuum_cleaners);
+        List<LightBulb> light_bulbs = lightBulbRepository.findAll();
+        List<CoffeeMachine> coffee_machines = coffeeMachineRepository.findAll();
+        List<Object> devices = List.of(vacuum_cleaners, light_bulbs, coffee_machines);
+        return ResponseEntity.ok().body(devices);
     }
 
-    // Should be create device
+    // TODO: Should be create device
     @GetMapping("api/createVacuumCleaner")
     public ResponseEntity<List<UserDevice>> createVacuumCleaner(@AuthenticationPrincipal MyUserPrincipal user) {
-	Vacuum newVacuum = new Vacuum();
-	vacuumRepository.save(newVacuum);
-	UserDevice userDevice = new UserDevice(user.getId(), newVacuum.getId(), "Vacuum", newVacuum.getSerialNumber());
-	userDeviceRepository.save(userDevice);
+        Vacuum newVacuum = new Vacuum();
+        vacuumRepository.save(newVacuum);
+        UserDevice userDevice = new UserDevice(user.getId(), newVacuum.getId(), "Vacuum", newVacuum.getSerialNumber());
+        userDeviceRepository.save(userDevice);
         List<UserDevice> userDevices = userDeviceRepository.findByUserId(user.getId());
         return ResponseEntity.ok().body(userDevices);
     }
@@ -107,21 +140,58 @@ public class HomeController {
         return ResponseEntity.ok().body(vacuum);
     }
 
-    @GetMapping("api/vacuum_cleaners/{id}/{isOn}")
-    public ResponseEntity<Vacuum> getVacuumBySerial(@PathVariable(value = "id") String _id, @PathVariable(value = "isOn") String _isOn)
+    @GetMapping("api/vacuum_cleaners")
+    public ResponseEntity<List<Vacuum>> getAllVacuums()
         throws ResourceNotFoundException {
-	Long id = Long.parseLong(_id);
-	Boolean isOn = Boolean.parseBoolean(_isOn);
+        List<Vacuum> vacuum_cleaners = vacuumRepository.findAll();
+        return ResponseEntity.ok().body(vacuum_cleaners);
+    }
+
+
+    @GetMapping("api/vacuum_cleaners/{id}/{isOn}")
+    public ResponseEntity<Vacuum> setOnOffVacuumCleaner(@PathVariable(value = "id") String _id, @PathVariable(value = "isOn") String _isOn)
+        throws ResourceNotFoundException {
+        Long id = Long.parseLong(_id);
+        Boolean isOn = Boolean.parseBoolean(_isOn);
         Vacuum vacuum = vacuumRepository.findById(id)
           .orElseThrow(() -> new ResourceNotFoundException("Vacuum not found for this id :: " + id));
-	if (vacuum != null) {
-	    vacuum.setIsOn(isOn);
-	    vacuumRepository.save(vacuum);
-	}
+        if (vacuum != null) {
+            vacuum.setIsOn(isOn);
+            vacuumRepository.save(vacuum);
+        }
         return ResponseEntity.ok().body(vacuum);
     }
+
+    @GetMapping("api/light_bulbs/{id}/{isOn}")
+    public ResponseEntity<LightBulb> setOnOffLightBulb(@PathVariable(value = "id") String _id, @PathVariable(value = "isOn") String _isOn)
+        throws ResourceNotFoundException {
+        Long id = Long.parseLong(_id);
+        Boolean isOn = Boolean.parseBoolean(_isOn);
+        LightBulb lightBulb = lightBulbRepository.findById(id)
+          .orElseThrow(() -> new ResourceNotFoundException("LightBulb not found for this id :: " + id));
+        if (lightBulb != null) {
+            lightBulb.setIsOn(isOn);
+            lightBulbRepository.save(lightBulb);
+        }
+        return ResponseEntity.ok().body(lightBulb);
+    }
+
+    @GetMapping("api/coffee_machines/{id}/{isOn}")
+    public ResponseEntity<CoffeeMachine> setOnOffCoffeeMachine(@PathVariable(value = "id") String _id, @PathVariable(value = "isOn") String _isOn)
+        throws ResourceNotFoundException {
+        Long id = Long.parseLong(_id);
+        Boolean isOn = Boolean.parseBoolean(_isOn);
+        CoffeeMachine coffeeMachine = coffeeMachineRepository.findById(id)
+          .orElseThrow(() -> new ResourceNotFoundException("CoffeeMachine not found for this id :: " + id));
+        if (coffeeMachine != null) {
+            coffeeMachine.setIsOn(isOn);
+            coffeeMachineRepository.save(coffeeMachine);
+        }
+        return ResponseEntity.ok().body(coffeeMachine);
+    }
     
-    // FIXIT: does this have to exist?
+    /* API/DEVICE/ID */
+    // TODO: Handle authentication
     @GetMapping("api/vacuum_cleaners/{id}")
     public ResponseEntity<Vacuum> getVacuumById(@PathVariable(value = "id") Long id)
         throws ResourceNotFoundException {
@@ -130,6 +200,47 @@ public class HomeController {
         return ResponseEntity.ok().body(vacuum);
     }
 
+    @GetMapping("api/coffee_machines/{id}")
+    public ResponseEntity<CoffeeMachine> getCoffeeMachineById(@PathVariable(value = "id") Long id)
+        throws ResourceNotFoundException {
+        CoffeeMachine coffeeMachine = coffeeMachineRepository.findById(id)
+          .orElseThrow(() -> new ResourceNotFoundException("CoffeeMachine not found for this id :: " + id));
+        return ResponseEntity.ok().body(coffeeMachine);
+    }
+
+    @GetMapping("api/light_bulbs/{id}")
+    public ResponseEntity<LightBulb> getLightBulbById(@PathVariable(value = "id") Long id)
+        throws ResourceNotFoundException {
+        LightBulb lightBulb = lightBulbRepository.findById(id)
+          .orElseThrow(() -> new ResourceNotFoundException("LightBulb not found for this id :: " + id));
+        return ResponseEntity.ok().body(lightBulb);
+    }
+
+    @GetMapping("api/movement_sensors/{id}")
+    public ResponseEntity<MovementSensor> getMovementSensorById(@PathVariable(value = "id") Long id)
+        throws ResourceNotFoundException {
+        MovementSensor movementSensor = movementSensorRepository.findById(id)
+          .orElseThrow(() -> new ResourceNotFoundException("MovementSensor not found for this id :: " + id));
+        return ResponseEntity.ok().body(movementSensor);
+    }
+
+    @GetMapping("api/refrigerators/{id}")
+    public ResponseEntity<Refrigerator> getRefrigeratorById(@PathVariable(value = "id") Long id)
+        throws ResourceNotFoundException {
+        Refrigerator refrigerator = refrigeratorRepository.findById(id)
+          .orElseThrow(() -> new ResourceNotFoundException("Refrigerator not found for this id :: " + id));
+        return ResponseEntity.ok().body(refrigerator);
+    }
+
+    @GetMapping("api/thermostats/{id}")
+    public ResponseEntity<Thermostat> getThermostatById(@PathVariable(value = "id") Long id)
+        throws ResourceNotFoundException {
+        Thermostat thermostat = thermostatRepository.findById(id)
+          .orElseThrow(() -> new ResourceNotFoundException("Thermostat not found for this id :: " + id));
+        return ResponseEntity.ok().body(thermostat);
+    }
+
+    /* USER STUFF */
     @GetMapping("api/getUsername")
     public ResponseEntity<String> getUserByUsername(@AuthenticationPrincipal MyUserPrincipal user)
         throws ResourceNotFoundException {

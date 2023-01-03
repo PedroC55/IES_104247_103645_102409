@@ -6,6 +6,7 @@ import TableCell from '@mui/material/TableCell';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Title from './Title';
+import AddDeviceModal from './AddDeviceModal';
 
 // Generate Order Data
 function createData(type, id, serial_number) {
@@ -37,6 +38,11 @@ export default function Orders(props) {
               .catch((err) => {
                       console.log(err.message);
               });
+  }
+
+  function updateDeviceTable(table) {
+    setRows(table);
+    props.onDeviceListChange(table);
   }
 
   function listUserDevices() {
@@ -81,9 +87,7 @@ export default function Orders(props) {
           ))}
         </TableBody>
       </Table>
-      <Link color="primary" href="#" onClick={addNewDevice} sx={{ mt: 3 }}>
-        Add new device 
-      </Link>
+      <AddDeviceModal updateDeviceTable={updateDeviceTable} />
     </React.Fragment>
   );
 }

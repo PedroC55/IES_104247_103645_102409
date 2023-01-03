@@ -1,70 +1,97 @@
 import * as React from 'react';
 import { useTheme } from '@mui/material/styles';
-import { LineChart, Line, XAxis, YAxis, Label, ResponsiveContainer } from 'recharts';
 import Title from './Title';
+import Chart from 'react-apexcharts';
 
-// Generate Sales Data
-function createData(time, amount) {
-  return { time, amount };
-}
-
-const data = [
-  createData('Jan', 25),
-  createData('Feb', 25),
-  createData('Mar', 35),
-  createData('Apr', 40),
-  createData('May', 40),
-  createData('Jun', 50),
-  createData('Jul', 75),
-  createData('Aug', undefined),
-];
-
-export default function Chart() {
+export default function Graph() {
   const theme = useTheme();
+  const [data, setData] = React.useState([]);
+  const [lastDate, setLastDate] = React.useState(0);
+
+  function getNewSeries(baseval, ydata) {
+      var newDate = baseval + 86400000;
+      setLastDate(newDate);
+      var tmp = [...data];
+      tmp.push({
+          x: newDate,
+          y: ydata
+      });
+      setData(tmp);
+  }
+
+  const chart = {
+      options: {
+      chart: {
+        id: "consumption-graph",
+        type: "line",
+        animations: {
+          enabled: true,
+          easing: 'linear',
+          dynamicAnimation: {
+            speed: 1000
+          }
+       },
+       toolbar: {
+          show: false
+       },
+       zoom: {
+          enabled: false
+       }
+     },
+     dataLabels: {
+        enabled: false
+     },
+     stroke: {
+        curve: 'smooth' 
+     },
+     markers: {
+        size: 0
+     },
+      xaxis: {
+        type: 'datetime',
+        range: 777600000 
+     },
+     ymaxis: {
+        max: 100
+     },
+     legend: {
+        show: false
+     },
+     colors: [
+        "#5d001e"
+     ]
+   },
+   series: [
+    {
+      data: data.slice()
+    }
+   ]
+ };
+
+  React.useEffect(() => {
+    const interval = setInterval(function() {
+        fetch('http://localhost:8080/api/getPowerConsumption/')
+          .then((response) => response.json())
+          .then((data) => {
+            console.log(data);
+            getNewSeries(lastDate, data);
+          })
+          .catch((err) => {
+                console.log(err.message);
+              });
+        }, 1000);
+    return () => clearInterval(interval);
+  }, [data, lastDate]);
+    
 
   return (
     <React.Fragment>
-      <Title>Power Consumed</Title>
-      <ResponsiveContainer>
-        <LineChart
-          data={data}
-          margin={{
-            top: 16,
-            right: 16,
-            bottom: 0,
-            left: 24,
-          }}
-        >
-          <XAxis
-            dataKey="time"
-            stroke={theme.palette.text.secondary}
-            style={theme.typography.body2}
-          />
-          <YAxis
-            stroke={theme.palette.text.secondary}
-            style={theme.typography.body2}
-          >
-            <Label
-              angle={270}
-              position="left"
-              style={{
-                textAnchor: 'middle',
-                fill: theme.palette.text.primary,
-                ...theme.typography.body1,
-              }}
-            >
-              Elec. Consumed (%)
-            </Label>
-          </YAxis>
-          <Line
-            isAnimationActive={false}
-            type="monotone"
-            dataKey="amount"
-            stroke={theme.palette.primary.main}
-            dot={false}
-          />
-        </LineChart>
-      </ResponsiveContainer>
+      <Title>Power Consumption</Title>
+      <Chart
+        options={chart.options}
+        series={chart.series}
+        height="90%"
+      />
     </React.Fragment>
   );
 }

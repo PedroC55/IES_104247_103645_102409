@@ -15,6 +15,7 @@ id: this.props.id,
     currentLocation: 'Living-room',
     cleaningMode: 'Quiet',
     remainingBattery: 56,
+    current_power_usage: 0,
     serialNumber: ''
     };
   }

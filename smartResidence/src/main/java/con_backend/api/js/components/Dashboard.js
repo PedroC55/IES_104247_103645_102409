@@ -19,11 +19,12 @@ import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import { mainListItems } from './listItems';
-import Chart from './Chart';
+import Graph from './Chart';
 import Deposits from './Deposits';
 import Vacuum from './Vacuum';
 import LightBulb from './LightBulb';
 import CoffeeMachine from './CoffeeMachine';
+import Refrigerator from './Refrigerator';
 import Orders from './Orders';
 import { useEffect } from 'react';
 
@@ -94,7 +95,7 @@ function createData(type, id, serial_number) {
 }
 
 function DashboardContent() {
-  const [open, setOpen] = React.useState(true);
+  const [open, setOpen] = React.useState(false);
   const [user, setUser] = React.useState("");
   const [devices, setDevices] = React.useState([]);
 
@@ -107,7 +108,7 @@ function DashboardContent() {
 		  .then((response) => response.json())
 		  .then((data) => {
 			  console.log(data);
-                          setUser(data.username);
+        setUser(data.username);
 		  })
 		  .catch((err) => {
 			  console.log(err.message);
@@ -120,9 +121,10 @@ function DashboardContent() {
 
   const renderSwitchDevice = (param, id) => {
       switch(param) {
-          case 'Vacuum': return <Vacuum id={id}/>;
-          case 'LightBulb': return <LightBulb id={id}/>;
-          case 'CoffeeMachine': return <CoffeeMachine id={id}/>;
+          case 'Vacuum': return <Vacuum id={id} />;
+          case 'LightBulb': return <LightBulb id={id} />;
+          case 'CoffeeMachine': return <CoffeeMachine id={id} />;
+          case 'Refrigerator': return <Refrigerator id={id} />;
       }
   }
 
@@ -204,10 +206,10 @@ function DashboardContent() {
                     p: 2,
                     display: 'flex',
                     flexDirection: 'column',
-                    height: 240,
+                    height: 350,
                   }}
                 >
-                  <Chart />
+                  <Graph />
                 </Paper>
               </Grid>
               {/* Recent Deposits */}
@@ -229,7 +231,7 @@ function DashboardContent() {
                   <Orders onDeviceListChange={handleDevicesChange}/>
                 </Paper>
               </Grid>
-              {/* Vacuum Cleaner */}
+              {/* Devices */}
               {devices.map((row, index) => (
                 <Grid item key={row.id} xs={12} md={6} lg={6}>
                   <Paper elevation={16}
@@ -237,7 +239,7 @@ function DashboardContent() {
                       p: 2,
                       display: 'flex',
                       flexDirection: 'column',
-                      height: 240,
+                      height: 260,
                     }}
                   >
                     {/* TODO: switch for dif types */}

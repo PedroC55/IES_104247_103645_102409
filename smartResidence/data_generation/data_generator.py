@@ -19,6 +19,7 @@ class Vacuum:
         self.currentLocation  = 'Kitchen'
         self.cleaningMode     = 'Power'
         self.remainingBattery = 50
+        self.current_power_usage = 25
         self.serialNumber     = ''
 
     # called each frame
@@ -29,9 +30,11 @@ class Vacuum:
             self.currentLocation  = 'Dock'
             self.cleaningMode     = 'Off'
             self.remainingBattery = 100
+            self.current_power_usage = random.randrange(60, 90)
             return 
         self.currentLocation = random.choice(VACUUM_LOCATIONS)
         self.cleaningMode    = random.choice(VACUUM_MODES)
+        self.current_power_usage = 0 
 
 class LightBulb:
     def __init__(self, id):
@@ -45,7 +48,7 @@ class LightBulb:
         self.serialNumber = ''
 
     def update(self):
-        pass
+        self.current_power_usage = random.randrange(6, 10)
 
 class CoffeeMachine:
     def __init__(self, id):
@@ -60,7 +63,19 @@ class CoffeeMachine:
         self.serialNumber = ''
 
     def update(self):
-        pass
+        self.current_power_usage = random.randrange(900, 1000)
+
+class Refrigerator:
+    def __init__(self, id):
+        self.id = id
+        self.name = 'Refrigerator'
+        self.airFilter_change_date = '02/02/2023'
+        self.content_list = ''
+        self.current_power_usage = 230 
+        self.serialNumber = ''
+
+    def update(self):
+        self.current_power_usage = random.randrange(300, 800)
 
 def getDataFromCall(url):
     response = requests.get(url)
@@ -89,6 +104,8 @@ def basic_loop(channel):
                     devices.append(LightBulb(device['id']))
                 elif device['name'] == 'CoffeeMachine':
                     devices.append(CoffeeMachine(device['id']))
+                elif device['name'] == 'Refrigerator':
+                    devices.append(Refrigerator(device['id']))
 
         for device in devices:
             if type(device) == Vacuum:
@@ -97,11 +114,16 @@ def basic_loop(channel):
                 response = requests.get(f'http://smart-residence-jdbc:8080/api/light_bulbs/{device.id}') 
             elif type(device) == CoffeeMachine:
                 response = requests.get(f'http://smart-residence-jdbc:8080/api/coffee_machines/{device.id}') 
+            elif type(device) == Refrigerator:
+                response = requests.get(f'http://smart-residence-jdbc:8080/api/refrigerators/{device.id}') 
+
             data = response.text
             device_json = json.loads(data)
 
-            device.isOn = device_json['isOn'] 
+            if ('isOn' in device_json):
+              device.isOn = device_json['isOn'] 
             device.serialNumber = device_json['serialNumber']
+
             device.update()
 
             channel.basic_publish('', 'test_routing_key', json.dumps(device.__dict__), 

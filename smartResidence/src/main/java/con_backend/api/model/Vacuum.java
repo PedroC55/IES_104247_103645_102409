@@ -13,7 +13,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @Entity
 @Table(name = "vacuum_cleaners")
-@JsonPropertyOrder({"name", "id", "isOn", "currentLocation", "cleaningMode", "remainingBattery", "serialNumber"})
+@JsonPropertyOrder({"name", "id", "isOn", "currentLocation", "cleaningMode", "remainingBattery", "current_power_usage", "serialNumber"})
 public class Vacuum {
 
     private final String NAME = "Vacuum";
@@ -26,6 +26,7 @@ public class Vacuum {
     private String currentLocation;
     private String cleaningMode;
     private int remainingBattery;
+    private int current_power_usage;
     private String serialNumber;
  
     public Vacuum() {
@@ -81,6 +82,14 @@ public class Vacuum {
     }
     public void setRemainingBattery(int remainingBattery) {
         this.remainingBattery = remainingBattery;
+    }
+
+    @Column(name = "current_power_usage", nullable = false)
+    public int getCurrent_power_usage() {
+        return this.current_power_usage;
+    }
+    public void setCurrent_power_usage(int current_power_usage) {
+        this.current_power_usage = current_power_usage;
     }
 
     public String getSerialNumber() {

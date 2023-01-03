@@ -14,34 +14,36 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import con_backend.api.model.Vacuum;
-import con_backend.api.repository.VacuumRepository;
-import con_backend.api.model.LightBulb;
-import con_backend.api.repository.LightBulbRepository;
-import con_backend.api.model.CoffeeMachine;
-import con_backend.api.repository.CoffeeMachineRepository;
-import con_backend.api.model.UserDevice;
-import con_backend.api.repository.UserDeviceRepository;
+
 import con_backend.api.model.User;
+import con_backend.api.model.UserDevice;
+import con_backend.api.model.Vacuum;
+import con_backend.api.model.LightBulb;
+import con_backend.api.model.CoffeeMachine;
+import con_backend.api.model.Refrigerator;
+
 import con_backend.api.repository.UserRepository;
+import con_backend.api.repository.UserDeviceRepository;
+import con_backend.api.repository.VacuumRepository;
+import con_backend.api.repository.LightBulbRepository;
+import con_backend.api.repository.CoffeeMachineRepository;
+import con_backend.api.repository.RefrigeratorRepository;
 
 @SpringBootApplication
 public class ApiApplication implements CommandLineRunner {
 
 	@Autowired
-	private VacuumRepository vacuumRepository;
-
-	@Autowired
-	private LightBulbRepository lightBulbRepository;
-
-	@Autowired
-	private CoffeeMachineRepository coffeeMachineRepository;
-
+	private UserRepository userRepository;
 	@Autowired
 	private UserDeviceRepository userDeviceRepository;
-
 	@Autowired
-	private UserRepository userRepository;
+	private VacuumRepository vacuumRepository;
+	@Autowired
+	private LightBulbRepository lightBulbRepository;
+	@Autowired
+	private CoffeeMachineRepository coffeeMachineRepository;
+	@Autowired
+	private RefrigeratorRepository refrigeratorRepository;
 
 	public static final String exchangeName = "";
 
@@ -83,29 +85,29 @@ public class ApiApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		Vacuum vacuum = new Vacuum(true, "Living-room", "Power", 50);
-		vacuumRepository.save(vacuum);
 
 		User user = new User("user", "{noop}password", "user@mail.com");
 		userRepository.save(user);
 
-		UserDevice userDevice = new UserDevice(user.getId(), vacuum.getId(), "Vacuum", vacuum.getSerialNumber());
-		userDeviceRepository.save(userDevice);
+		Vacuum vacuum = new Vacuum(true, "Living-room", "Power", 50);
+		vacuumRepository.save(vacuum);
+		userDeviceRepository.save(new UserDevice(user.getId(), vacuum.getId(), "Vacuum", vacuum.getSerialNumber()));
 
 		Vacuum vacuum1 = new Vacuum(true, "Living-room", "Power", 50);
 		vacuumRepository.save(vacuum1);
-		UserDevice userDevice1 = new UserDevice(user.getId(), vacuum1.getId(), "Vacuum", vacuum1.getSerialNumber());
-		userDeviceRepository.save(userDevice1);
+		userDeviceRepository.save(new UserDevice(user.getId(), vacuum1.getId(), "Vacuum", vacuum1.getSerialNumber()));
 
 		LightBulb lightBulb = new LightBulb();
 		lightBulbRepository.save(lightBulb);
-		UserDevice userDevice2 = new UserDevice(user.getId(), lightBulb.getId(), "LightBulb", lightBulb.getSerialNumber());
-		userDeviceRepository.save(userDevice2);
+		userDeviceRepository.save(new UserDevice(user.getId(), lightBulb.getId(), "LightBulb", lightBulb.getSerialNumber()));
 
 		CoffeeMachine coffeeMachine = new CoffeeMachine();
 		coffeeMachineRepository.save(coffeeMachine);
-		UserDevice userDevice3 = new UserDevice(user.getId(), coffeeMachine.getId(), "CoffeeMachine", coffeeMachine.getSerialNumber());
-		userDeviceRepository.save(userDevice3);
+		userDeviceRepository.save(new UserDevice(user.getId(), coffeeMachine.getId(), "CoffeeMachine", coffeeMachine.getSerialNumber()));
+
+		Refrigerator refrigerator = new Refrigerator();
+		refrigeratorRepository.save(refrigerator);
+		userDeviceRepository.save(new UserDevice(user.getId(), refrigerator.getId(), "Refrigerator", refrigerator.getSerialNumber()));
 
 		Vacuum vacuum2 = new Vacuum(true, "Living-room", "Power", 50);
 		vacuumRepository.save(vacuum2);

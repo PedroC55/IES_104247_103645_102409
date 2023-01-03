@@ -7,12 +7,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.json.JSONObject;
 
 import con_backend.api.exception.ResourceNotFoundException;
-import con_backend.api.repository.VacuumRepository;
+
 import con_backend.api.model.Vacuum;
-import con_backend.api.repository.LightBulbRepository;
 import con_backend.api.model.LightBulb;
-import con_backend.api.repository.CoffeeMachineRepository;
 import con_backend.api.model.CoffeeMachine;
+import con_backend.api.model.Refrigerator;
+
+import con_backend.api.repository.VacuumRepository;
+import con_backend.api.repository.LightBulbRepository;
+import con_backend.api.repository.CoffeeMachineRepository;
+import con_backend.api.repository.RefrigeratorRepository;
 
 @Component
 public class Receiver {
@@ -26,6 +30,9 @@ public class Receiver {
   
   @Autowired
   private CoffeeMachineRepository coffeeMachineRepository;
+
+  @Autowired
+  private RefrigeratorRepository refrigeratorRepository;
 
 	public void receiveMessage(String message) 
 		throws ResourceNotFoundException {
@@ -70,6 +77,17 @@ public class Receiver {
               coffeeMachine.setCurrent_power_usage(Integer.parseInt(objectJson.get("current_power_usage").toString()));
 
               coffeeMachineRepository.save(coffeeMachine);
+            }
+            break;
+       case "Refrigerator":
+            Refrigerator refrigerator = refrigeratorRepository.findById(Long.parseLong(objectJson.get("id").toString()))
+              .orElseThrow(() -> new ResourceNotFoundException("coffeeMachine not found for this id"));
+            if (refrigerator != null) {
+              refrigerator.setAirFilter_change_date(objectJson.get("airFilter_change_date").toString());
+              refrigerator.setContent_list(objectJson.get("content_list").toString());
+              refrigerator.setCurrent_power_usage(Integer.parseInt(objectJson.get("current_power_usage").toString()));
+
+              refrigeratorRepository.save(refrigerator);
             }
             break;
     }

@@ -117,17 +117,70 @@ public class HomeController {
         List<Vacuum> vacuum_cleaners = vacuumRepository.findAll();
         List<LightBulb> light_bulbs = lightBulbRepository.findAll();
         List<CoffeeMachine> coffee_machines = coffeeMachineRepository.findAll();
-        List<Object> devices = List.of(vacuum_cleaners, light_bulbs, coffee_machines);
+        List<Refrigerator> refrigerators = refrigeratorRepository.findAll();
+        List<Object> devices = List.of(vacuum_cleaners, light_bulbs, coffee_machines, refrigerators);
         return ResponseEntity.ok().body(devices);
     }
 
+
     // TODO: Should be create device
-    @GetMapping("api/createVacuumCleaner")
-    public ResponseEntity<List<UserDevice>> createVacuumCleaner(@AuthenticationPrincipal MyUserPrincipal user) {
-        Vacuum newVacuum = new Vacuum();
-        vacuumRepository.save(newVacuum);
-        UserDevice userDevice = new UserDevice(user.getId(), newVacuum.getId(), "Vacuum", newVacuum.getSerialNumber());
-        userDeviceRepository.save(userDevice);
+    @GetMapping("api/getPowerConsumption")
+    public ResponseEntity<Integer> getPowerConsumption(@AuthenticationPrincipal MyUserPrincipal user) 
+        throws ResourceNotFoundException {
+        List<UserDevice> userDevices = userDeviceRepository.findByUserId(user.getId());
+        int sum = 0;
+        for (UserDevice userDevice : userDevices) {
+          switch(userDevice.getDeviceType()) {
+            case "Vacuum":
+              Vacuum vacuum = vacuumRepository.findById(userDevice.getDeviceId())
+                .orElseThrow(() -> new ResourceNotFoundException("Vacuum not found for this id :: " + userDevice.getDeviceId()));
+              sum += vacuum.getCurrent_power_usage();
+              break;
+            case "Refrigerator":
+              Refrigerator refrigerator = refrigeratorRepository.findById(userDevice.getDeviceId())
+                .orElseThrow(() -> new ResourceNotFoundException("Refrigerator not found for this id :: " + userDevice.getDeviceId()));
+              sum += refrigerator.getCurrent_power_usage();
+              break;
+            case "CoffeeMachine":
+              CoffeeMachine coffeeMachine = coffeeMachineRepository.findById(userDevice.getDeviceId())
+                .orElseThrow(() -> new ResourceNotFoundException("CoffeeMachine not found for this id :: " + userDevice.getDeviceId()));
+              sum += coffeeMachine.getCurrent_power_usage();
+              break;
+            case "LightBulb":
+              LightBulb lightBulb = lightBulbRepository.findById(userDevice.getDeviceId())
+                .orElseThrow(() -> new ResourceNotFoundException("LightBulb not found for this id :: " + userDevice.getDeviceId()));
+              sum += lightBulb.getCurrent_power_usage();
+              break;
+          }
+        }
+        return ResponseEntity.ok().body(sum);
+    }
+
+    @GetMapping("api/createDevice/{device}")
+    public ResponseEntity<List<UserDevice>> createDevice(@AuthenticationPrincipal MyUserPrincipal user, @PathVariable(value = "device") String device) {
+        switch(device) {
+          case "Vacuum":
+            Vacuum vacuum = new Vacuum();
+            vacuumRepository.save(vacuum);
+            userDeviceRepository.save(new UserDevice(user.getId(), vacuum.getId(), vacuum.getName(), vacuum.getSerialNumber()));
+            break;
+          case "Refrigerator":
+            Refrigerator refrigerator = new Refrigerator();
+            refrigeratorRepository.save(refrigerator);
+            userDeviceRepository.save(new UserDevice(user.getId(), refrigerator.getId(), refrigerator.getName(), refrigerator.getSerialNumber()));
+            break;
+          case "CoffeeMachine":
+            CoffeeMachine coffeeMachine = new CoffeeMachine();
+            coffeeMachineRepository.save(coffeeMachine);
+            userDeviceRepository.save(new UserDevice(user.getId(), coffeeMachine.getId(), coffeeMachine.getName(), coffeeMachine.getSerialNumber()));
+            break;
+          case "LightBulb":
+            LightBulb lightBulb = new LightBulb(); 
+            lightBulbRepository.save(lightBulb);
+            userDeviceRepository.save(new UserDevice(user.getId(), lightBulb.getId(), lightBulb.getName(), lightBulb.getSerialNumber()));
+            break;
+        }
+
         List<UserDevice> userDevices = userDeviceRepository.findByUserId(user.getId());
         return ResponseEntity.ok().body(userDevices);
     }
@@ -290,13 +343,6 @@ public class HomeController {
         throws ResourceNotFoundException {
         Device device = deviceRepository.findById(deviceId)
           .orElseThrow(() -> new ResourceNotFoundException("Device not found for this id :: " + deviceId));
-        return ResponseEntity.ok().body(device);
-    }
-
-    // FIXIT: does this have to exist?
-    @PostMapping("api/devices")
-    public ResponseEntity<Device> createDevice(@Valid @RequestBody Device device) {
-        deviceRepository.save(device);
         return ResponseEntity.ok().body(device);
     }
 

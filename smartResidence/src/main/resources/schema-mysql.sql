@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS vacuum_cleaners (
         currentLocation VARCHAR(32) NOT NULL,
         cleaningMode VARCHAR(16) NOT NULL,
         remainingBattery INT(3) UNSIGNED NOT NULL,
+        current_power_usage INT(6) NOT NULL,
         serialNumber VARCHAR(64) NOT NULL
 );
 

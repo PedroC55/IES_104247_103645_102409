@@ -1,4 +1,0 @@
-./mvnw package 
-docker-compose down
-docker-compose build
-docker-compose up

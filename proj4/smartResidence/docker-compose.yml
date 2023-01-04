@@ -1,0 +1,61 @@
+version: '2.1'
+services:
+        smart-residence-jdbc:
+                build: ./
+                ports:
+                        - "8080:8080"
+                networks:
+                        - smart-residence-network
+                depends_on: 
+                        rabbitmq:
+                                condition: service_healthy
+                healthcheck:
+                        test: "curl --silent -f http://localhost:8080 > /dev/null || exit 1"
+                        interval: 20s
+                        timeout: 10s
+                        retries: 2
+                restart: on-failure 
+                                
+
+        sqldb:
+                image: mysql:8
+                networks:
+                        - smart-residence-network
+                environment:
+                        - MYSQL_ROOT_PASSWORD=root
+                        - MYSQL_DATABASE=smartResidence
+                healthcheck:
+                        test: "mysql MMS -u -proot -e 'SELECT 1;'"
+                        interval: 20s
+                        timeout: 10s
+                        retries: 2
+
+        data_generator:
+                build: ./data_generation
+                networks:
+                        - smart-residence-network
+                depends_on:
+                        rabbitmq:
+                                condition: service_healthy
+                        smart-residence-jdbc:
+                                condition: service_healthy
+
+
+        rabbitmq:
+                image: rabbitmq:management
+                networks: 
+                        - smart-residence-network
+                environment:
+                        - RABBITMQ_DEFAULT_USER=guest
+                        - RABBITMQ_DEFAULT_PASS=guest
+                ports:
+                        - "5672:5672"
+                        - "15672:15672"
+                healthcheck:
+                        test: "rabbitmq-diagnostics -q status"
+                        interval: 30s
+                        timeout: 10s
+                        retries: 5
+
+networks:
+        smart-residence-network:

@@ -10,6 +10,7 @@ const AddDeviceModal = (props) => {
   const [selectedDevice, setSelectedDevice] = useState('Vacuum');
 
   const handleAddDeviceClick = () => {
+    setSelectedDevice('Vacuum');
     setIsModalOpen(true);
   };
 

@@ -10,7 +10,7 @@ class Vacuum extends React.Component {
 
     console.log(this.props);
     this.state = { 
-id: this.props.id,
+    id: this.props.id,
     isOn: true,
     currentLocation: 'Living-room',
     cleaningMode: 'Quiet',
@@ -52,13 +52,14 @@ id: this.props.id,
         <React.Fragment>
         <Title>Vacuum</Title>
         <label>
+        <span className='label-text' style={{ color: this.state.isOn ? 'green' : '' }}>On</span>
+        <span className='label-text'>/</span>
+        <span className='label-text' style={{ color: this.state.isOn ? '' : 'red' }}>Off  </span>
         <Toggle
         checked={this.state.isOn}
         aria-label='label'
         onChange={this.handleOnOff} 
         />
-        <span className='label-text'>this.state.isOn: </span>
-        <span className='label-text' style={{ color: this.state.isOn ? 'green' : 'red' }}>{JSON.stringify(this.state.isOn)}</span>
         </label>
         <span>this.state.id: {JSON.stringify(this.state.id)}</span>
         <span>this.state.currentLocation: {JSON.stringify(this.state.currentLocation)}</span>

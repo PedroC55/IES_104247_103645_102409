@@ -36,6 +36,8 @@ class Vacuum:
         self.cleaningMode    = random.choice(VACUUM_MODES)
         self.current_power_usage = 0 
 
+LIGHT_LOCATIONS = ['Kitchen', 'Living-room', 'Bedroom', 'Bathroom']
+LIGHT_COLORS = ['Red', 'Blue', 'White', 'Warm-White', 'Green', 'Orange', 'Yellow', 'Purple']
 class LightBulb:
     def __init__(self, id):
         self.id = id
@@ -49,7 +51,11 @@ class LightBulb:
 
     def update(self):
         self.current_power_usage = random.randrange(6, 10)
+        self.location = random.choice(LIGHT_LOCATIONS)
+        self.color = random.choice(LIGHT_COLORS)
+        self.brightnessLvl = random.randrange(50, 100)
 
+COFFEE_STRENGTH = ['Weak-', 'Weak', 'Medium', 'Strong', 'Strong+']
 class CoffeeMachine:
     def __init__(self, id):
         self.id = id
@@ -64,7 +70,16 @@ class CoffeeMachine:
 
     def update(self):
         self.current_power_usage = random.randrange(900, 1000)
+        self.water_lvl -= 1
+        if self.water_lvl <= 0 or self.isOn == False:
+            self.isOn = False
+            self.water_lvl = 100
+            self.add_water = False
+            return 
+        self.add_water = True 
+        self.strength = random.choice(COFFEE_STRENGTH)
 
+FOODS = ['Apple', 'Milk', 'Eggs', 'Butter', 'Juice', 'Soy Milk', 'Cheese', 'Ham']
 class Refrigerator:
     def __init__(self, id):
         self.id = id
@@ -76,6 +91,8 @@ class Refrigerator:
 
     def update(self):
         self.current_power_usage = random.randrange(300, 800)
+        idx = random.randrange(0, len(FOODS))
+        self.content_list = str(FOODS[:idx])
 
 def getDataFromCall(url):
     response = requests.get(url)
